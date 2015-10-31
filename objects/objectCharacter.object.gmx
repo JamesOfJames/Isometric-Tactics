@@ -39,7 +39,7 @@ MaxHP = 10;
 HP = MaxHP;
 MaxFP = 10;
 FP = MaxFP;
-
+/*
 var a;
 a = instance_nearest(x, y, objectSpace);
 x = a.x;

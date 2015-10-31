@@ -11,11 +11,18 @@
     <sprite>sprites\spriteWall</sprite>
     <sprite>sprites\spritePlayer</sprite>
     <sprite>sprites\spriteEnemy</sprite>
+    <sprite>sprites\spriteStud</sprite>
   </sprites>
   <backgrounds name="background"/>
   <paths name="paths"/>
   <scripts name="scripts">
     <script>scripts\scriptAttack.gml</script>
+    <scripts name="Coord Translators">
+      <script>scripts\scriptCoordsToIsoX.gml</script>
+      <script>scripts\scriptCoordsToIsoY.gml</script>
+      <script>scripts\scriptIsoToCoordX.gml</script>
+      <script>scripts\scriptIsoToCoordY.gml</script>
+    </scripts>
   </scripts>
   <objects name="objects">
     <object>objects\objectController</object>
