@@ -112,7 +112,7 @@ if path_get_length(path) &gt; 0
           <argument>
             <kind>1</kind>
             <string>draw_self();
-draw_path(path, GridX, GridY, true)
+draw_path(path, GridX, GridY, true);
 </string>
           </argument>
         </arguments>

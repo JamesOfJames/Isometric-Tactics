@@ -3,7 +3,7 @@
 // argument0 = roomX
 // argument1 = roomY
 
-var isoX = round((argument1 / global.TileHeight) + (argument0 / (2 * global.TileWidth)));
-var isoY = round((argument1 / global.TileHeight) - (argument0 / (2 * global.TileWidth)));
+var isoX = round((argument0 / global.TileWidth) + (argument1 / global.TileHeight));
+var isoY = round((argument1 / global.TileHeight) - (argument0 / global.TileWidth));
 
 return isoY;

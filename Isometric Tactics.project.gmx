@@ -8,10 +8,22 @@
   <sprites name="sprites">
     <sprite>sprites\spriteSpace1</sprite>
     <sprite>sprites\spriteSpace2</sprite>
-    <sprite>sprites\spriteWall</sprite>
+    <sprite>sprites\spriteVertWall</sprite>
+    <sprite>sprites\spriteHorizWall</sprite>
     <sprite>sprites\spritePlayer</sprite>
     <sprite>sprites\spriteEnemy</sprite>
     <sprite>sprites\spriteStud</sprite>
+    <sprites name="Weapons">
+      <sprite>sprites\spriteShotgun</sprite>
+      <sprite>sprites\spriteRifle</sprite>
+      <sprite>sprites\spriteSMG</sprite>
+      <sprite>sprites\spritePistol</sprite>
+    </sprites>
+    <sprites name="Masks">
+      <sprite>sprites\spriteCharMask</sprite>
+      <sprite>sprites\spriteVertWallMask</sprite>
+      <sprite>sprites\spriteHorizWallMask</sprite>
+    </sprites>
   </sprites>
   <backgrounds name="background"/>
   <paths name="paths"/>
@@ -28,6 +40,8 @@
     <object>objects\objectController</object>
     <object>objects\objectSpace</object>
     <object>objects\objectWall</object>
+    <object>objects\objectVertWall</object>
+    <object>objects\objectHorizWall</object>
     <object>objects\objectCharacter</object>
     <object>objects\objectPlayer</object>
     <object>objects\objectEnemy</object>
