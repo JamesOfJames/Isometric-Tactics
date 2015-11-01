@@ -20,9 +20,16 @@
       <sprite>sprites\spritePistol</sprite>
     </sprites>
     <sprites name="Masks">
-      <sprite>sprites\spriteCharMask</sprite>
-      <sprite>sprites\spriteVertWallMask</sprite>
-      <sprite>sprites\spriteHorizWallMask</sprite>
+      <sprites name="Characters">
+        <sprite>sprites\spriteCharMaskE</sprite>
+        <sprite>sprites\spriteCharMaskN</sprite>
+        <sprite>sprites\spriteCharMaskS</sprite>
+        <sprite>sprites\spriteCharMaskW</sprite>
+      </sprites>
+      <sprites name="Walls">
+        <sprite>sprites\spriteHorizWallMask</sprite>
+        <sprite>sprites\spriteVertWallMask</sprite>
+      </sprites>
     </sprites>
   </sprites>
   <backgrounds name="background"/>
