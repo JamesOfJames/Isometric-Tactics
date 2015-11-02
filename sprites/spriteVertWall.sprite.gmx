@@ -2,23 +2,23 @@
 <sprite>
   <type>0</type>
   <xorig>30</xorig>
-  <yorigin>57</yorigin>
-  <colkind>3</colkind>
+  <yorigin>191</yorigin>
+  <colkind>0</colkind>
   <coltolerance>0</coltolerance>
   <sepmasks>0</sepmasks>
-  <bboxmode>2</bboxmode>
+  <bboxmode>0</bboxmode>
   <bbox_left>0</bbox_left>
-  <bbox_right>59</bbox_right>
-  <bbox_top>42</bbox_top>
-  <bbox_bottom>71</bbox_bottom>
+  <bbox_right>209</bbox_right>
+  <bbox_top>0</bbox_top>
+  <bbox_bottom>204</bbox_bottom>
   <HTile>0</HTile>
   <VTile>0</VTile>
   <TextureGroups>
     <TextureGroup0>0</TextureGroup0>
   </TextureGroups>
   <For3D>0</For3D>
-  <width>60</width>
-  <height>72</height>
+  <width>210</width>
+  <height>205</height>
   <frames>
     <frame index="0">images\spriteVertWall_0.png</frame>
   </frames>

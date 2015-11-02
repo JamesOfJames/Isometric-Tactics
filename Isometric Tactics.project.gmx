@@ -35,12 +35,16 @@
   <backgrounds name="background"/>
   <paths name="paths"/>
   <scripts name="scripts">
+    <script>scripts\scriptDiceRoll.gml</script>
     <script>scripts\scriptAttack.gml</script>
     <scripts name="Coord Translators">
       <script>scripts\scriptCoordsToIsoX.gml</script>
       <script>scripts\scriptCoordsToIsoY.gml</script>
       <script>scripts\scriptIsoToCoordX.gml</script>
       <script>scripts\scriptIsoToCoordY.gml</script>
+    </scripts>
+    <scripts name="Data">
+      <script>scripts\scriptGunLoad.gml</script>
     </scripts>
   </scripts>
   <objects name="objects">

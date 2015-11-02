@@ -55,24 +55,22 @@ for (e = 0; e &lt; ds_grid_height(global.Grid); e += 1)
     {mask_index = spriteVertWallMask;
      image_index = 0;
      if place_free(script_execute(scriptIsoToCoordX, d, e), script_execute(scriptIsoToCoordY, d, e))
-     {for (g = 0; g &lt; 6; g += 1)
-      {f = instance_create(script_execute(scriptIsoToCoordX, d, e + g), script_execute(scriptIsoToCoordY, d, e + g), objectVertWall);
-       f.GridX = d;
-       f.GridY = e + g;
-       f.z = 1;
-       f.depth = -script_execute(scriptCoordsToIsoX, f.x, f.y) - script_execute(scriptCoordsToIsoY, f.x, f.y) - (10 * f.z);}}}}
+     {f = instance_create(script_execute(scriptIsoToCoordX, d, e), script_execute(scriptIsoToCoordY, d, e), objectVertWall);
+      f.GridX = d;
+      f.GridY = e;
+      f.z = 1;
+      f.depth = -script_execute(scriptCoordsToIsoX, f.x, f.y) - script_execute(scriptCoordsToIsoY, f.x, f.y) - (10 * f.z);}}}
    else
    {// Horizontal wall
     if d + 5 &lt; ds_grid_width(global.Grid)
     {mask_index = spriteHorizWallMask;
      image_index = 1;
      if place_free(script_execute(scriptIsoToCoordX, d, e), script_execute(scriptIsoToCoordY, d, e))
-     {for (g = 0; g &lt; 6; g += 1)
-      {f = instance_create(script_execute(scriptIsoToCoordX, d + g, e), script_execute(scriptIsoToCoordY, d + g, e), objectHorizWall);
-       f.GridX = d + g;
-       f.GridY = e;
-       f.z = 1;
-       f.depth = -script_execute(scriptCoordsToIsoX, f.x, f.y) - script_execute(scriptCoordsToIsoY, f.x, f.y) - (10 * f.z);}}}}}
+     {f = instance_create(script_execute(scriptIsoToCoordX, d, e), script_execute(scriptIsoToCoordY, d, e), objectHorizWall);
+      f.GridX = d;
+      f.GridY = e;
+      f.z = 1;
+      f.depth = -script_execute(scriptCoordsToIsoX, f.x, f.y) - script_execute(scriptCoordsToIsoY, f.x, f.y) - (10 * f.z);}}}}
   // Floor
   if d mod 6 == 0 and e mod 6 == 0
   {f = instance_create(script_execute(scriptIsoToCoordX, d, e), script_execute(scriptIsoToCoordY, d, e), objectSpace);
@@ -110,6 +108,137 @@ with c
 }
  
 with (objectSpace) event_user(0);
+</string>
+          </argument>
+        </arguments>
+      </action>
+      <action>
+        <libid>1</libid>
+        <id>603</id>
+        <kind>7</kind>
+        <userelative>0</userelative>
+        <isquestion>0</isquestion>
+        <useapplyto>-1</useapplyto>
+        <exetype>2</exetype>
+        <functionname></functionname>
+        <codestring></codestring>
+        <whoName>self</whoName>
+        <relative>0</relative>
+        <isnot>0</isnot>
+        <arguments>
+          <argument>
+            <kind>1</kind>
+            <string>/// Weapons
+
+
+GunDmg = 3;
+GunArmorDiv = 3;
+GunDmgType = "pi-"
+GunAcc = 3;
+GunRange = 500;
+GunMaxRange = 2100;
+GunROF = 3;
+GunShots = 40;
+Ammo = GunShots;
+GunReload = 3;
+GunRcl = 2;
+
+var a, b;
+b = 4; // Number of Guns
+a = 20; // Number of Stats
+
+global.GunList = ds_grid_create(a, b);
+
+c = 0;
+
+// Gun Data
+ds_grid_set(global.GunList, 0, c, "Pistol"); // Weapon Type
+ds_grid_set(global.GunList, 1, c, 9); // Tech Level
+ds_grid_set(global.GunList, 2, c, "Medium Pistol, 7.5mmCLP"); // Weapon Name
+ds_grid_set(global.GunList, 3, c, 2); // Damage Dice
+ds_grid_set(global.GunList, 4, c, 2); // Damage Add
+ds_grid_set(global.GunList, 5, c, "pi"); // Damage Type
+ds_grid_set(global.GunList, 6, c, 2); // Accuracy
+ds_grid_set(global.GunList, 7, c, 150); // Half Damage Range
+ds_grid_set(global.GunList, 8, c, 1900); // Extreme Range
+ds_grid_set(global.GunList, 9, c, 2); // Weapon Weight
+ds_grid_set(global.GunList, 10, c, 0.5); // Magazine Weight
+ds_grid_set(global.GunList, 11, c, 3); // Rate of Fire
+ds_grid_set(global.GunList, 12, c, 30); // Shots / Magazine
+ds_grid_set(global.GunList, 13, c, 3); // Reload Time
+ds_grid_set(global.GunList, 14, c, 9); // Strength
+ds_grid_set(global.GunList, 15, c, false); // Two-Handed?
+ds_grid_set(global.GunList, 16, c, -2); // Bulk penalty
+ds_grid_set(global.GunList, 17, c, 2); // Recoil
+ds_grid_set(global.GunList, 18, c, 450); // Price
+ds_grid_set(global.GunList, 19, c, 3); // Legality
+c++;
+
+ds_grid_set(global.GunList, 0, c, "SMG"); // Weapon Type
+ds_grid_set(global.GunList, 1, c, 9); // Tech Level
+ds_grid_set(global.GunList, 2, c, "Machine Pistol, 10mmCLP"); // Weapon Name
+ds_grid_set(global.GunList, 3, c, 3); // Damage Dice
+ds_grid_set(global.GunList, 4, c, 0); // Damage Add
+ds_grid_set(global.GunList, 5, c, "pi+"); // Damage Type
+ds_grid_set(global.GunList, 6, c, 2); // Accuracy
+ds_grid_set(global.GunList, 7, c, 180); // Half Damage Range
+ds_grid_set(global.GunList, 8, c, 2000); // Extreme Range
+ds_grid_set(global.GunList, 9, c, 3); // Weapon Weight
+ds_grid_set(global.GunList, 10, c, 1); // Magazine Weight
+ds_grid_set(global.GunList, 11, c, 3); // Rate of Fire
+ds_grid_set(global.GunList, 12, c, 30); // Shots / Magazine
+ds_grid_set(global.GunList, 13, c, 3); // Reload Time
+ds_grid_set(global.GunList, 14, c, 10); // Strength
+ds_grid_set(global.GunList, 15, c, false); // Two-Handed?
+ds_grid_set(global.GunList, 16, c, -2); // Bulk penalty
+ds_grid_set(global.GunList, 17, c, 3); // Recoil
+ds_grid_set(global.GunList, 18, c, 750); // Price
+ds_grid_set(global.GunList, 19, c, 2); // Legality
+c++;
+
+ds_grid_set(global.GunList, 0, c, "Rifle"); // Weapon Type
+ds_grid_set(global.GunList, 1, c, 9); // Tech Level
+ds_grid_set(global.GunList, 2, c, "Hunting Rifle, 7mmCL"); // Weapon Name
+ds_grid_set(global.GunList, 3, c, 6); // Damage Dice
+ds_grid_set(global.GunList, 4, c, 1); // Damage Add
+ds_grid_set(global.GunList, 5, c, "pi"); // Damage Type
+ds_grid_set(global.GunList, 6, c, 4); // Accuracy
+ds_grid_set(global.GunList, 7, c, 750); // Half Damage Range
+ds_grid_set(global.GunList, 8, c, 4200); // Extreme Range
+ds_grid_set(global.GunList, 9, c, 7); // Weapon Weight
+ds_grid_set(global.GunList, 10, c, 0.3); // Magazine Weight
+ds_grid_set(global.GunList, 11, c, 3); // Rate of Fire
+ds_grid_set(global.GunList, 12, c, 10); // Shots / Magazine
+ds_grid_set(global.GunList, 13, c, 3); // Reload Time
+ds_grid_set(global.GunList, 14, c, 9); // Strength
+ds_grid_set(global.GunList, 15, c, true); // Two-Handed?
+ds_grid_set(global.GunList, 16, c, -5); // Bulk penalty
+ds_grid_set(global.GunList, 17, c, 2); // Recoil
+ds_grid_set(global.GunList, 18, c, 800); // Price
+ds_grid_set(global.GunList, 19, c, 3); // Legality
+c++;
+
+ds_grid_set(global.GunList, 0, c, "Shotgun"); // Weapon Type
+ds_grid_set(global.GunList, 1, c, 9); // Tech Level
+ds_grid_set(global.GunList, 2, c, "Shotgun Pistol, 18.5mmPC"); // Weapon Name
+ds_grid_set(global.GunList, 3, c, 4); // Damage Dice
+ds_grid_set(global.GunList, 4, c, 0); // Damage Add
+ds_grid_set(global.GunList, 5, c, "pi++"); // Damage Type
+ds_grid_set(global.GunList, 6, c, 1); // Accuracy
+ds_grid_set(global.GunList, 7, c, 100); // Half Damage Range
+ds_grid_set(global.GunList, 8, c, 500); // Extreme Range
+ds_grid_set(global.GunList, 9, c, 4); // Weapon Weight
+ds_grid_set(global.GunList, 10, c, 0.7); // Magazine Weight
+ds_grid_set(global.GunList, 11, c, 3); // Rate of Fire
+ds_grid_set(global.GunList, 12, c, 5); // Shots / Magazine
+ds_grid_set(global.GunList, 13, c, 3); // Reload Time
+ds_grid_set(global.GunList, 14, c, 10); // Strength
+ds_grid_set(global.GunList, 15, c, false); // Two-Handed?
+ds_grid_set(global.GunList, 16, c, -3); // Bulk penalty
+ds_grid_set(global.GunList, 17, c, 5); // Recoil
+ds_grid_set(global.GunList, 18, c, 330); // Price
+ds_grid_set(global.GunList, 19, c, 3); // Legality
+c++;
 </string>
           </argument>
         </arguments>

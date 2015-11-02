@@ -7,6 +7,8 @@ d = argument1;
 
 show_debug_message(string(a.Name) + " is attacking " + string(d.Name));
 
+if a.Ammo > 0
+{// Has ammo
 if point_distance(a.x, a.y, d.x, d.y) <= a.GunMaxRange
 {// In Range
  // Basic Aim adjustment
@@ -47,17 +49,19 @@ if point_distance(a.x, a.y, d.x, d.y) <= a.GunMaxRange
  
 // show_debug_message("Skill of " + string(a.SkillGuns) + " + " + string(b) + " for aim, + " + string(c) + " for range, + " + string(f) + " for rapid fire");
  a.EffectiveSkill = a.SkillGuns + b + d.Size + c + f;
- a.AttackRoll = irandom_range(1, 6) + irandom_range(1, 6) + irandom_range(1, 6);
+ a.AttackRoll = script_execute(scriptDiceRoll, 3);
+ 
+ a.Shots = min(a.GunROF, a.Ammo);
  
  // How many rapid fire shots may hit?
  if a.EffectiveSkill - a.AttackRoll > 0
  {if a.EffectiveSkill - a.AttackRoll > a.GunRcl
-  {a.Hits = min(floor((a.EffectiveSkill - a.AttackRoll) / a.GunRcl), min(a.GunROF, a.Ammo));}
+  {a.Hits = min(floor((a.EffectiveSkill - a.AttackRoll) / a.GunRcl), a.Shots);}
   else {a.Hits = 1;}}
  else {a.Hits = 0;}
  
  // Use Ammo
- a.Ammo -= min(a.GunROF, a.Ammo);
+ a.Ammo -= a.Shots;
  
  if a.AttackRoll <= a.EffectiveSkill {show_debug_message("Attacker rolls " + string(a.AttackRoll) + " against an effective skill of " + string(a.EffectiveSkill) + ", hitting up to " + string(a.Hits) + " times");}
  else {{show_debug_message("Attacker rolls " + string(a.AttackRoll) + " against an effective skill of " + string(a.EffectiveSkill) + ", missing");}}
@@ -74,7 +78,7 @@ if point_distance(a.x, a.y, d.x, d.y) <= a.GunMaxRange
   if a.AttackRoll <= a.EffectiveSkill
   {// Successful Attack Roll
    // Defender rolls to dodge
-   d.DodgeRoll = irandom_range(1, 6) + irandom_range(1, 6) + irandom_range(1, 6);
+   d.DodgeRoll = script_execute(scriptDiceRoll, 3);
       
    if d.DodgeRoll > 5
    {if d.DodgeRoll > d.Dodge
@@ -91,22 +95,57 @@ if point_distance(a.x, a.y, d.x, d.y) <= a.GunMaxRange
     d.Critical = true;
     show_debug_message("Defender rolls " + string(d.DodgeRoll) + " and dodges all hits");}}}
  
+/*
+GunType = ds_grid_get(global.GunList, 0, a); // Weapon Type
+GunTL = ds_grid_get(global.GunList, 1, a); // Tech Level
+GunName = ds_grid_get(global.GunList, 2, a); // Weapon Name
+GunDmgDice = ds_grid_get(global.GunList, 3, a); // Damage Dice
+GunDmgAdd = ds_grid_get(global.GunList, 4, a); // Damage Add
+GunDmgType = ds_grid_get(global.GunList, 5, a); // Damage Type
+GunAcc = ds_grid_get(global.GunList, 6, a); // Accuracy
+GunHalfRange = ds_grid_get(global.GunList, 7, a); // Half Damage Range
+GunRange = ds_grid_get(global.GunList, 8, a); // Extreme Range
+GunWeight = ds_grid_get(global.GunList, 9, a); // Weapon Weight
+GunAmmoWeight = ds_grid_get(global.GunList, 10, a); // Magazine Weight
+GunROF = ds_grid_get(global.GunList, 11, a); // Rate of Fire
+GunMagSize = ds_grid_get(global.GunList, 12, a); // Shots / Magazine
+GunReload = ds_grid_get(global.GunList, 13, a); // Reload Time
+GunST = ds_grid_get(global.GunList, 14, a); // Strength
+GunTwoHanded = ds_grid_get(global.GunList, 15, a); // Two-Handed?
+GunBulk = ds_grid_get(global.GunList, 16, a); // Bulk penalty
+GunRecoil = ds_grid_get(global.GunList, 17, a); // Recoil
+GunPrice = ds_grid_get(global.GunList, 18, a); // Price
+GunLC = ds_grid_get(global.GunList, 19, a); // Legality
+*/    
+    
+    
  if !d.Critical
  {// For attacks not fully dodged
   for (e = 0; e < a.Hits - d.NumberDodged; e += 1)
   {// Damage
-   a.DamageRoll = 0;
-   for (g = 0; g < a.GunDmg; g += 1)
-   {// Removing Critical Damage for now.
-    a.DamageRoll += irandom_range(1, 6);}
-    /*if !a.Critical {a.DamageRoll += irandom_range(1, 6);}
-    else {a.DamageRoll += 6;}}*/
+   if !a.Critical {a.DamageRoll = script_execute(scriptDiceRoll, GunDmgDice, GunDmgAdd);;}
+   else {a.DamageRoll = (6 * GunDmgDice) + GunDmgAdd;}}
    if string_count(string(a.GunDmgType), string(d.DamageType)) > 0
    {// Defender's Armor absorbs Attaker's damage type
-    d.PenetratingDamage = max(a.DamageRoll - d.DR, 0);}
+    d.DQ = d.DR / (d.HP + d.DR);}
    else
    {// Defender's Armor does not absorb Attaker's damage type
-    d.PenetratingDamage = max(a.DamageRoll - d.LowDR, 0);}
-   d.HP -= d.PenetratingDamage;
+    d.DQ = d.LowDR / (d.HP + d.LowDR);}
+    d.ArmorDamage = round(d.DQ * a.DamageRoll);
+    d.HealthDamage = a.DamageRoll - d.ArmorDamage;
+    while (d.ArmorDamage > 0 or )
+    {if irandom(d.ArmorDamage) >
+    }
+    
+    
+    d.PenetratingDamage = max(a.DamageRoll - d.LowDR, 0);
+    d.HP -= d.PenetratingDamage;
    show_debug_message("Attacker hit \#" + string(e + 1) + ": " + string(a.DamageRoll) + ", of which " + string(d.PenetratingDamage) + " penetrates, leaving defender at " + string(d.HP));
-   }}}
+   }}
+ else
+ {// Out of Range
+ }
+}
+else
+{// Out of ammo
+}
