@@ -50,6 +50,9 @@ MaxSpeed = 5;
 MaxDodge = MaxSpeed + 3;
 script_execute(scriptMoveDodgeCalc, id);
 
+Gun = script_execute(scriptGunLoad, irandom(ds_grid_height(global.GunList) - 1));
+Armor = script_execute(scriptArmorLoad, irandom(ds_grid_height(global.ArmorList) - 1));
+Gun.Ammo = Gun.GunMagSize;
 SkillGuns = 13;
 DoNothing = false; // took no action last turn
 
@@ -67,8 +70,8 @@ MortalWound = false;
 Height = 1; //sprite_get_height(sprite_index);
 Size = 0;
 
-GridX = script_execute(scriptCoordsToIsoX, x, y)
-GridY = script_execute(scriptCoordsToIsoY, x, y)
+GridX = x / global.GridSize;
+GridY = y / global.GridSize;
 z = 1;
 depth = -GridX - GridY - (10 * z);
 </string>
@@ -101,6 +104,31 @@ depth = -GridX - GridY - (10 * z);
         </arguments>
       </action>
     </event>
+    <event eventtype="7" enumb="11">
+      <action>
+        <libid>1</libid>
+        <id>603</id>
+        <kind>7</kind>
+        <userelative>0</userelative>
+        <isquestion>0</isquestion>
+        <useapplyto>-1</useapplyto>
+        <exetype>2</exetype>
+        <functionname></functionname>
+        <codestring></codestring>
+        <whoName>self</whoName>
+        <relative>0</relative>
+        <isnot>0</isnot>
+        <arguments>
+          <argument>
+            <kind>1</kind>
+            <string>/// Update Grid Coords
+GridX = x / global.GridSize;
+GridY = y / global.GridSize;
+</string>
+          </argument>
+        </arguments>
+      </action>
+    </event>
     <event eventtype="7" enumb="10">
       <action>
         <libid>1</libid>
@@ -118,7 +146,8 @@ depth = -GridX - GridY - (10 * z);
         <arguments>
           <argument>
             <kind>1</kind>
-            <string>view_xview[0] = x - (view_wview[0] / 2);
+            <string>/// Recenter Screen on Player
+view_xview[0] = x - (view_wview[0] / 2);
 view_yview[0] = y - (view_hview[0] / 2);
 </string>
           </argument>

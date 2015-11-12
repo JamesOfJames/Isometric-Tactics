@@ -26,57 +26,12 @@
           <argument>
             <kind>1</kind>
             <string>image_speed = 0;
-
-MaxST = script_execute(scriptDiceRoll);
-MaxDX = script_execute(scriptDiceRoll);
-MaxIQ = script_execute(scriptDiceRoll);
-MaxHT = script_execute(scriptDiceRoll);
-MaxPer = script_execute(scriptDiceRoll);
-MaxWill = script_execute(scriptDiceRoll);
-
-ST = MaxST;
-DX = MaxDX;
-IQ = MaxIQ;
-HT = MaxHT;
-Per = MaxPer;
-Will = MaxWill;
-
-Lift = sqr(ST);
-Encumberance = Lift * script_execute(scriptDiceRoll) / 3;
-
-show_debug_message(string(object_get_name(object_index)) + " - ST: " + string(ST) + ", DX: " + string(DX) + ", IQ: " + string(IQ) + ", HT: " + string(HT) + ", Per: " + string(Per) + ", Will: " + string(Will) + " &amp; carrying " + string(Encumberance) + " lbs, which is " + string(floor(Encumberance / Lift)) + "x Lift.");
-
-MaxSpeed = 5;
-MaxDodge = MaxSpeed + 3;
-script_execute(scriptMoveDodgeCalc, id);
-
-SkillGuns = 13;
-DoNothing = false; // took no action last turn
-
-MaxHP = 10;
-HP = MaxHP;
-MaxFP = 10;
-FP = MaxFP;
-
-Conscious = true;
-Alive = true;
-Shock = 0;
-RecentlyWounded = false;
-MortalWound = false;
-
-Height = 1; //sprite_get_height(sprite_index);
-Size = 0;
-
-GridX = script_execute(scriptCoordsToIsoX, x, y)
-GridY = script_execute(scriptCoordsToIsoY, x, y)
-z = 1;
-depth = -GridX - GridY - (10 * z);
 </string>
           </argument>
         </arguments>
       </action>
     </event>
-    <event eventtype="3" enumb="0">
+    <event eventtype="7" enumb="25">
       <action>
         <libid>1</libid>
         <id>603</id>
@@ -93,9 +48,9 @@ depth = -GridX - GridY - (10 * z);
         <arguments>
           <argument>
             <kind>1</kind>
-            <string>if Moves &lt;= 0
-{Moves = Speed;
- with (objectSpace) event_user(0);}
+            <string>/// Load Gun from list
+
+script_execute(scriptGunLoad, GunNumber);
 </string>
           </argument>
         </arguments>
@@ -118,8 +73,9 @@ depth = -GridX - GridY - (10 * z);
         <arguments>
           <argument>
             <kind>1</kind>
-            <string>view_xview[0] = x - (view_wview[0] / 2);
-view_yview[0] = y - (view_hview[0] / 2);
+            <string>/// Reload
+
+Ammo = GunMagSize;
 </string>
           </argument>
         </arguments>

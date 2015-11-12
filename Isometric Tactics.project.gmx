@@ -31,12 +31,18 @@
         <sprite>sprites\spriteVertWallMask</sprite>
       </sprites>
     </sprites>
+    <sprites name="Basic - Testing">
+      <sprite>sprites\spriteBasicEnemy</sprite>
+      <sprite>sprites\spriteBasicPlayer</sprite>
+      <sprite>sprites\spriteWall</sprite>
+    </sprites>
   </sprites>
   <backgrounds name="background"/>
   <paths name="paths"/>
   <scripts name="scripts">
-    <script>scripts\scriptDiceRoll.gml</script>
     <script>scripts\scriptAttack.gml</script>
+    <script>scripts\scriptDiceRoll.gml</script>
+    <script>scripts\scriptDiceRollRerollable.gml</script>
     <scripts name="Coord Translators">
       <script>scripts\scriptCoordsToIsoX.gml</script>
       <script>scripts\scriptCoordsToIsoY.gml</script>
@@ -45,6 +51,21 @@
     </scripts>
     <scripts name="Data">
       <script>scripts\scriptGunLoad.gml</script>
+      <script>scripts\scriptArmorLoad.gml</script>
+      <script>scripts\scriptArmorCoverage.gml</script>
+    </scripts>
+    <scripts name="Messages">
+      <script>scripts\scriptMessageAdd.gml</script>
+    </scripts>
+    <scripts name="Characters">
+      <script>scripts\scriptHealthCheck.gml</script>
+      <script>scripts\scriptEncumberanceCalc.gml</script>
+      <script>scripts\scriptMoveDodgeCalc.gml</script>
+    </scripts>
+    <scripts name="Turn Control">
+      <script>scripts\scriptTurnStart.gml</script>
+      <script>scripts\scriptCheckBeforeMove.gml</script>
+      <script>scripts\scriptTurnEnd.gml</script>
     </scripts>
   </scripts>
   <objects name="objects">
@@ -56,6 +77,14 @@
     <object>objects\objectCharacter</object>
     <object>objects\objectPlayer</object>
     <object>objects\objectEnemy</object>
+    <objects name="Basic - Testing">
+      <object>objects\objectBasicChar</object>
+      <object>objects\objectBasicEnemy</object>
+      <object>objects\objectBasicPlayer</object>
+      <object>objects\objectBasicController</object>
+    </objects>
+    <object>objects\objectArmor</object>
+    <object>objects\objectGun</object>
   </objects>
   <rooms name="rooms">
     <room>rooms\room0</room>

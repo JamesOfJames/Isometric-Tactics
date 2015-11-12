@@ -26,6 +26,7 @@
           <argument>
             <kind>1</kind>
             <string>randomize();
+image_speed = 0;
 
 // Get the template tile used for defining the size of an isometric tile
 templateTile = spriteStud;

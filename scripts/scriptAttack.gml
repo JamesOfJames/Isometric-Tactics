@@ -1,18 +1,27 @@
 // argument0 = Attacker
 // argument1 = Target
+// argument2 = Attacker's Gun
+// argument3 = Target's Armor
 
-var a, b, c, d, e, f, g;
+var a, b, c, d, e, f, g, h, i, j;
 a = argument0;
 d = argument1;
+i = argument2;
+j = argument3;
 
 show_debug_message(string(a.Name) + " is attacking " + string(d.Name));
 
-if a.Ammo > 0
+if i.Ammo > 0
 {// Has ammo
-if point_distance(a.x, a.y, d.x, d.y) <= a.GunMaxRange
+if point_distance(a.x, a.y, d.x, d.y) <= i.GunRange
 {// In Range
+ a.HalfDamage = false;
+ // 1/2 damage range?
+ if point_distance(a.x, a.y, d.x, d.y) <= i.GunHalfRange {a.HalfDamage = true;}
+
  // Basic Aim adjustment
- b = a.GunAcc
+ b = i.GunAcc
+ // This should actually account for # of aim actions before firing; snapshot penalty, etc.
 
  // Basic Range adjustment
  c = sqrt(sqr(a.GridX - d.GridX) + sqr(a.GridX - d.GridX)) / global.GridSize // distance between gridspaces
@@ -45,24 +54,24 @@ if point_distance(a.x, a.y, d.x, d.y) <= a.GunMaxRange
  
  f = 0;
  for (e = 0; e < array_length_1d(RapidFire); e += 1)
- {if a.GunROF > RapidFire[e] {f = e;}}
+ {if i.GunROF > RapidFire[e] {f = e;}}
  
 // show_debug_message("Skill of " + string(a.SkillGuns) + " + " + string(b) + " for aim, + " + string(c) + " for range, + " + string(f) + " for rapid fire");
  a.EffectiveSkill = a.SkillGuns + b + d.Size + c + f;
- a.AttackRoll = script_execute(scriptDiceRoll, 3);
- 
- a.Shots = min(a.GunROF, a.Ammo);
- 
+ a.AttackRoll = script_execute(scriptDiceRoll);
+
+ // Figure Shots, Use Ammo 
+ a.Shots = min(i.GunROF, i.Ammo);
+ i.Ammo -= a.Shots;
+
  // How many rapid fire shots may hit?
- if a.EffectiveSkill - a.AttackRoll > 0
- {if a.EffectiveSkill - a.AttackRoll > a.GunRcl
-  {a.Hits = min(floor((a.EffectiveSkill - a.AttackRoll) / a.GunRcl), a.Shots);}
-  else {a.Hits = 1;}}
- else {a.Hits = 0;}
- 
- // Use Ammo
- a.Ammo -= a.Shots;
- 
+ if a.Shots > 1
+ {if a.EffectiveSkill - a.AttackRoll >= 0
+  {if a.EffectiveSkill - a.AttackRoll > a.GunRcl
+   {a.Hits = min(floor((a.EffectiveSkill - a.AttackRoll) / i.GunRcl), a.Shots);}
+   else {a.Hits = 1;}}
+  else {a.Hits = 0;}}
+     
  if a.AttackRoll <= a.EffectiveSkill {show_debug_message("Attacker rolls " + string(a.AttackRoll) + " against an effective skill of " + string(a.EffectiveSkill) + ", hitting up to " + string(a.Hits) + " times");}
  else {{show_debug_message("Attacker rolls " + string(a.AttackRoll) + " against an effective skill of " + string(a.EffectiveSkill) + ", missing");}}
 
@@ -78,8 +87,8 @@ if point_distance(a.x, a.y, d.x, d.y) <= a.GunMaxRange
   if a.AttackRoll <= a.EffectiveSkill
   {// Successful Attack Roll
    // Defender rolls to dodge
-   d.DodgeRoll = script_execute(scriptDiceRoll, 3);
-      
+   d.DodgeRoll = script_execute(scriptDiceRoll);
+
    if d.DodgeRoll > 5
    {if d.DodgeRoll > d.Dodge
     {// Failed Dodge
@@ -93,59 +102,98 @@ if point_distance(a.x, a.y, d.x, d.y) <= a.GunMaxRange
    else
    {// Critical Dodge
     d.Critical = true;
-    show_debug_message("Defender rolls " + string(d.DodgeRoll) + " and dodges all hits");}}}
- 
-/*
-GunType = ds_grid_get(global.GunList, 0, a); // Weapon Type
-GunTL = ds_grid_get(global.GunList, 1, a); // Tech Level
-GunName = ds_grid_get(global.GunList, 2, a); // Weapon Name
-GunDmgDice = ds_grid_get(global.GunList, 3, a); // Damage Dice
-GunDmgAdd = ds_grid_get(global.GunList, 4, a); // Damage Add
-GunDmgType = ds_grid_get(global.GunList, 5, a); // Damage Type
-GunAcc = ds_grid_get(global.GunList, 6, a); // Accuracy
-GunHalfRange = ds_grid_get(global.GunList, 7, a); // Half Damage Range
-GunRange = ds_grid_get(global.GunList, 8, a); // Extreme Range
-GunWeight = ds_grid_get(global.GunList, 9, a); // Weapon Weight
-GunAmmoWeight = ds_grid_get(global.GunList, 10, a); // Magazine Weight
-GunROF = ds_grid_get(global.GunList, 11, a); // Rate of Fire
-GunMagSize = ds_grid_get(global.GunList, 12, a); // Shots / Magazine
-GunReload = ds_grid_get(global.GunList, 13, a); // Reload Time
-GunST = ds_grid_get(global.GunList, 14, a); // Strength
-GunTwoHanded = ds_grid_get(global.GunList, 15, a); // Two-Handed?
-GunBulk = ds_grid_get(global.GunList, 16, a); // Bulk penalty
-GunRecoil = ds_grid_get(global.GunList, 17, a); // Recoil
-GunPrice = ds_grid_get(global.GunList, 18, a); // Price
-GunLC = ds_grid_get(global.GunList, 19, a); // Legality
-*/    
-    
-    
+    show_debug_message("Defender rolls " + string(d.DodgeRoll) + " and dodges all hits");}}
+ else
+ {// Missed - failed attack roll
+  if a.AttackRoll > 16 // Critical Failure of attack roll
+  {// Gun Jams?  Shoot self?
+  
+  }}}
+  
  if !d.Critical
  {// For attacks not fully dodged
   for (e = 0; e < a.Hits - d.NumberDodged; e += 1)
   {// Damage
-   if !a.Critical {a.DamageRoll = script_execute(scriptDiceRoll, GunDmgDice, GunDmgAdd);;}
-   else {a.DamageRoll = (6 * GunDmgDice) + GunDmgAdd;}}
-   if string_count(string(a.GunDmgType), string(d.DamageType)) > 0
+   if !a.Critical {a.DamageRoll = script_execute(scriptDiceRoll, i.GunDmgDice, i.GunDmgAdd);} // Figure Damage as Normal
+   else {a.DamageRoll = (6 * i.GunDmgDice) + i.GunDmgAdd;} // Max Damage on Critical
+   h = false; // Using high or low DR?  false = low
+   if string_count(string(i.GunDmgType), string(j.ArmDmgTypes)) > 0 // search for weapon's damage type in armor's high-resistance types
    {// Defender's Armor absorbs Attaker's damage type
-    d.DQ = d.DR / (d.HP + d.DR);}
+    d.DQ = j.DR / (d.HP + j.DR);
+    h = true;}
    else
    {// Defender's Armor does not absorb Attaker's damage type
-    d.DQ = d.LowDR / (d.HP + d.LowDR);}
+    d.DQ = j.LowDR / (d.HP + j.LowDR);}
+// show_debug_message("Damage Quotient: " + string(d.DQ) + "; using high DR? " + string(h));
     d.ArmorDamage = round(d.DQ * a.DamageRoll);
     d.HealthDamage = a.DamageRoll - d.ArmorDamage;
-    while (d.ArmorDamage > 0 or )
-    {if irandom(d.ArmorDamage) >
-    }
-    
-    
-    d.PenetratingDamage = max(a.DamageRoll - d.LowDR, 0);
+    j.ArmorWear = 0;   
+// show_debug_message("d.ArmorDamage " + string(d.ArmorDamage) + ", j.LowDR " + string(j.LowDR) + ", j.DR " + string(j.DR) + ", j.ArmDamageRatio " + string(j.ArmDamageRatio) + ", j.ArmorWear " + string(j.ArmorWear));
+    if d.DQ > 0
+    {if !h
+     {// Deal Damage to Armor using LowDR
+      while (d.ArmorDamage > 0 and j.LowDR > 0)
+      {if irandom(d.ArmorDamage) > j.LowDR
+       {j.LowDR -= 1;
+        j.DR -= 1 / j.ArmDamageRatio;
+        j.ArmorWear += 1;
+        if j.LowDR <= 0
+        {// Armor broke!
+         show_debug_message("Defender's armor broke with " + d.ArmorDamage + " damage to armor left, on top of " + d.HealthDamage + "!");}}
+        d.ArmorDamage -= j.LowDR;}}
+     else 
+     {// Deal Damage to Armor using DR
+      while (d.ArmorDamage > 0 and j.DR > 0)
+      {if irandom(d.ArmorDamage) > j.DR
+       {j.DR -= 1;
+        j.ArmorWear += 1;
+        j.LowDR -= j.ArmDamageRatio;
+        if j.DR <= 0
+        {// Armor broke!
+         show_debug_message("Defender's armor broke with " + d.ArmorDamage + " damage to armor left, on top of " + d.HealthDamage + "!");}}
+        d.ArmorDamage -= j.DR;}}
+    if d.ArmorDamage > 0 // Armor was broken
+    {d.HealthDamage += d.ArmorDamage;}}
+    d.PenetratingDamage = max(d.HealthDamage, 0);
     d.HP -= d.PenetratingDamage;
-   show_debug_message("Attacker hit \#" + string(e + 1) + ": " + string(a.DamageRoll) + ", of which " + string(d.PenetratingDamage) + " penetrates, leaving defender at " + string(d.HP));
-   }}
+    show_debug_message("Attacker hit \#" + string(e + 1) + ": " + string(a.DamageRoll) + ", which reduces armor by " + string(j.ArmorWear) + ", with " + string(d.PenetratingDamage) + " penetrating, leaving defender at " + string(d.HP));
+    // Shock
+    d.Shock = -max(4, 
+    SHOCK
+Whenever you suffer injury,
+reduce your DX and IQ by the number of HP you lost – to a maximum
+penalty of -4, regardless of your
+injuries –on your next turn only.This
+effect, called “shock,” is temporary;
+your attributes return to normal on
+the turn after that.
+Shock affects DX- and IQ-based
+skills, but notactive defenses or other
+defensive reactions; see Temporary
+Attribute Penalties(p. 421). Therefore,
+on the turn after you are badly hurt, it
+is often a good idea to try flight or AllOut Defense instead of an immediate
+counterattack!
+High HP and Shock: If you have 20
+or more Hit Points, your shock penalty is -1 per HP/10 of injury (drop all
+fractions). Thus, if you have 20-29 HP,
+it’s -1 per 2 HP lost; if you have 30-39
+HP, it’s -1 per 3 HP lost, and so forth.
+The maximum penalty is still -4.
+    script_execute(scriptHealthCheck, d);
+    }}}
  else
  {// Out of Range
+  show_debug_message("Out of Range");
  }
 }
 else
 {// Out of ammo
+  show_debug_message("Out of Ammo; reloading...");
+  with i
+  {event_user(0);} // Gun: Reload
 }
+
+j.DR = round(j.DR);
+j.LowDR = round(j.LowDR);
+j.ArmorWear = 0;
