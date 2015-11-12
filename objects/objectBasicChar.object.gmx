@@ -46,9 +46,10 @@ Encumberance = Lift * script_execute(scriptDiceRoll) / 3;
 
 show_debug_message(string(object_get_name(object_index)) + " - ST: " + string(ST) + ", DX: " + string(DX) + ", IQ: " + string(IQ) + ", HT: " + string(HT) + ", Per: " + string(Per) + ", Will: " + string(Will) + " &amp; carrying " + string(Encumberance) + " lbs, which is " + string(floor(Encumberance / Lift)) + "x Lift.");
 
-MaxSpeed = 5;
+MaxSpeed = (HT + DX) / 4;
 MaxDodge = MaxSpeed + 3;
 script_execute(scriptMoveDodgeCalc, id);
+Initiative = 0;
 
 Gun = script_execute(scriptGunLoad, irandom(ds_grid_height(global.GunList) - 1));
 Armor = script_execute(scriptArmorLoad, irandom(ds_grid_height(global.ArmorList) - 1));
@@ -99,6 +100,32 @@ depth = -GridX - GridY - (10 * z);
             <string>if Moves &lt;= 0
 {Moves = Speed;
  with (objectSpace) event_user(0);}
+</string>
+          </argument>
+        </arguments>
+      </action>
+    </event>
+    <event eventtype="7" enumb="25">
+      <action>
+        <libid>1</libid>
+        <id>603</id>
+        <kind>7</kind>
+        <userelative>0</userelative>
+        <isquestion>0</isquestion>
+        <useapplyto>-1</useapplyto>
+        <exetype>2</exetype>
+        <functionname></functionname>
+        <codestring></codestring>
+        <whoName>self</whoName>
+        <relative>0</relative>
+        <isnot>0</isnot>
+        <arguments>
+          <argument>
+            <kind>1</kind>
+            <string>/// My turn!
+script_execute(scriptTurnStart);
+
+script_execute(scriptTurnEnd);
 </string>
           </argument>
         </arguments>

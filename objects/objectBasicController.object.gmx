@@ -8,6 +8,75 @@
   <parentName>&lt;undefined&gt;</parentName>
   <maskName>&lt;undefined&gt;</maskName>
   <events>
+    <event eventtype="7" enumb="10">
+      <action>
+        <libid>1</libid>
+        <id>603</id>
+        <kind>7</kind>
+        <userelative>0</userelative>
+        <isquestion>0</isquestion>
+        <useapplyto>-1</useapplyto>
+        <exetype>2</exetype>
+        <functionname></functionname>
+        <codestring></codestring>
+        <whoName>self</whoName>
+        <relative>0</relative>
+        <isnot>0</isnot>
+        <arguments>
+          <argument>
+            <kind>1</kind>
+            <string>/// Cycle Turns
+with objectBasicChar {Initiative += Speed;}
+ds_grid_resize(global.Initiative, 3, instance_number(objectBasicChar));
+ds_grid_clear(global.Initiative, -1);
+
+// Create Array of Characters, sort them by initiative.
+var i, a, b;
+i = ds_grid_create(2, instance_number(objectBasicChar));
+for (a = 0; a &lt; instance_number(objectBasicChar); a += 1)
+{b = instance_find(objectBasicChar, a);
+ ds_grid_set(i, 0, a, b);
+ ds_grid_set(i, 1, a, b.Initiative);}
+ds_grid_sort(i, 1, true);
+
+// Check for duplicate values
+var c, d, e, f, g, h, j;
+d = ds_grid_get_max(i, 1, 0, 1, ds_grid_height(i) - 1);
+e = ds_grid_get_min(i, 1, 0, 1, ds_grid_height(i) - 1);
+for (c = d; c &gt; e; c -= .25)
+{if ds_grid_value_exists(i, 1, 0, 1, ds_grid_height(i) - 1, c)
+ {f = ds_grid_value_y(i, 1, 0, 1, ds_grid_height(i) - 1, c);
+  if ds_grid_height(i) &gt; 1
+  {// Check for multiples
+   for (g = 1; g &lt; ds_grid_height(i) - 1; g += 1)
+   {if ds_grid_value_exists(i, 1, 0, 1, ds_grid_height(i) - g, c)
+    {h = ds_grid_value_y(i, 1, 0, 1, ds_grid_height(i) - g, c);}}
+   j = f - h;} // How many multiples of these speed?
+  else {j = 0;}
+  
+  // Add everyone to Order List
+  var k, l, m, n, o
+  for (k = 0; k &lt; ds_grid_height(global.Initiative) - 1; k += 1)
+  {do
+   {l = irandom(j);
+    m = ds_grid_get(i, 0, ds_grid_height(i) - 1 - l); // next instance; swapping to last place.
+    n = ds_grid_get(i, 0, ds_grid_height(i) - 1); // last-place instance.
+    ds_grid_set(i, 0, ds_grid_height(i) - 1, m);
+    ds_grid_set(i, 0, ds_grid_height(i) - 1 - l, n);
+    ds_grid_set(global.Initiative, 0, k, ds_grid_get(i, 0, ds_grid_height(i) - 1));
+    ds_grid_set(global.Initiative, 1, k, ds_grid_get(i, 1, ds_grid_height(i) - 1));
+    ds_grid_set(global.Initiative, 2, k, false);  
+    ds_grid_resize(i, 2, ds_grid_height(i) - 1);
+    j -= 1;}
+    until (j &lt; 0);}}}
+
+// Clean up
+ds_grid_destroy(i);
+</string>
+          </argument>
+        </arguments>
+      </action>
+    </event>
     <event eventtype="7" enumb="4">
       <action>
         <libid>1</libid>
@@ -256,7 +325,9 @@ global.NewMessage = ds_queue_create();
         <arguments>
           <argument>
             <kind>1</kind>
-            <string>randomize();
+            <string>/// Setup Play
+
+randomize();
 image_speed = 0;
 
 // Get the template tile used for defining the size of an isometric tile
@@ -329,20 +400,26 @@ mp_grid_add_instances(global.MovementGrid, objectWall, true);
      
 // Create Player  
 var c, g, h;
-g = irandom(GridWidth);
-h = irandom(GridHeight);
+do
+{g = irandom(GridWidth);
+ h = irandom(GridHeight);}
+until (place_empty(g * global.GridSize, h * global.GridSize));
 c = instance_create(g * global.GridSize, h * global.GridSize, objectBasicPlayer);
 with c
 {
 }
 
 // Create Enemy
-g = irandom(GridWidth);
-h = irandom(GridHeight);
+do
+{g = irandom(GridWidth);
+ h = irandom(GridHeight);}
+until (place_empty(g * global.GridSize, h * global.GridSize));
 c = instance_create(g * global.GridSize, h * global.GridSize, objectBasicEnemy);
 with c
 {
 }
+
+global.Initiative = ds_grid_create(3, instance_number(objectBasicChar));
 </string>
           </argument>
         </arguments>

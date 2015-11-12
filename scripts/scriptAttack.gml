@@ -57,7 +57,7 @@ if point_distance(a.x, a.y, d.x, d.y) <= i.GunRange
  {if i.GunROF > RapidFire[e] {f = e;}}
  
 // show_debug_message("Skill of " + string(a.SkillGuns) + " + " + string(b) + " for aim, + " + string(c) + " for range, + " + string(f) + " for rapid fire");
- a.EffectiveSkill = a.SkillGuns + b + d.Size + c + f;
+ a.EffectiveSkill = a.SkillGuns + b + d.Size + c + f - a.Shock;
  a.AttackRoll = script_execute(scriptDiceRoll);
 
  // Figure Shots, Use Ammo 
@@ -156,30 +156,12 @@ if point_distance(a.x, a.y, d.x, d.y) <= i.GunRange
     {d.HealthDamage += d.ArmorDamage;}}
     d.PenetratingDamage = max(d.HealthDamage, 0);
     d.HP -= d.PenetratingDamage;
+    if d.PenetratingDamage > 0 {d.RecentlyWounded = true;} // for purposes of re-checking certain potentially fatal injuries
     show_debug_message("Attacker hit \#" + string(e + 1) + ": " + string(a.DamageRoll) + ", which reduces armor by " + string(j.ArmorWear) + ", with " + string(d.PenetratingDamage) + " penetrating, leaving defender at " + string(d.HP));
     // Shock
-    d.Shock = -max(4, 
-    SHOCK
-Whenever you suffer injury,
-reduce your DX and IQ by the number of HP you lost – to a maximum
-penalty of -4, regardless of your
-injuries –on your next turn only.This
-effect, called “shock,” is temporary;
-your attributes return to normal on
-the turn after that.
-Shock affects DX- and IQ-based
-skills, but notactive defenses or other
-defensive reactions; see Temporary
-Attribute Penalties(p. 421). Therefore,
-on the turn after you are badly hurt, it
-is often a good idea to try flight or AllOut Defense instead of an immediate
-counterattack!
-High HP and Shock: If you have 20
-or more Hit Points, your shock penalty is -1 per HP/10 of injury (drop all
-fractions). Thus, if you have 20-29 HP,
-it’s -1 per 2 HP lost; if you have 30-39
-HP, it’s -1 per 3 HP lost, and so forth.
-The maximum penalty is still -4.
+    d.Shock += floor(d.PenetratingDamage * (1 / max(1, d.MaxHP / 10)));
+    d.Shock = max(4, d.Shock);
+    show_debug_message("shock: " + string(d.Shock));
     script_execute(scriptHealthCheck, d);
     }}}
  else
