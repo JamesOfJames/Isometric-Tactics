@@ -28,9 +28,9 @@
             <string>image_speed = 0;
 //image_alpha = .5;
 
-Visibility = false
+Visibility = false;
 
-Height = sprite_get_height(sprite_index);
+Height = irandom_range(1, 4) * 3; // Plates; 1-4 bricks high
 depth = -y;
 </string>
           </argument>

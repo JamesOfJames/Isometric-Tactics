@@ -347,7 +347,7 @@ global.Grid = ds_grid_create(GridWidth, GridHeight);
 ds_grid_clear(global.Grid, 0);
     
 // Create Walls &amp; Floor
-var d, e, f, g;
+var d, e, f;
 for (e = 0; e &lt; ds_grid_height(global.Grid); e += 1)
 {for (d = 0; d &lt; ds_grid_width(global.Grid); d += 1) 
  {if random(1) &lt; .02
@@ -399,27 +399,33 @@ mp_grid_add_instances(global.MovementGrid, objectWall, true);
 
      
 // Create Player  
-var c, g, h;
+var c, g, h, i, j;
+i = sprite_get_xoffset(object_get_sprite(objectBasicPlayer));
+j = sprite_get_yoffset(object_get_sprite(objectBasicPlayer));
 do
 {g = irandom(GridWidth);
  h = irandom(GridHeight);}
-until (place_empty(g * global.GridSize, h * global.GridSize));
-c = instance_create(g * global.GridSize, h * global.GridSize, objectBasicPlayer);
+until (place_empty((g * global.GridSize) + i, (h * global.GridSize) + j));
+c = instance_create((g * global.GridSize) + i, (h * global.GridSize) + j, objectBasicPlayer);
 with c
 {
 }
 
 // Create Enemy
+i = sprite_get_xoffset(object_get_sprite(objectBasicEnemy));
+j = sprite_get_yoffset(object_get_sprite(objectBasicEnemy));
 do
 {g = irandom(GridWidth);
  h = irandom(GridHeight);}
-until (place_empty(g * global.GridSize, h * global.GridSize));
-c = instance_create(g * global.GridSize, h * global.GridSize, objectBasicEnemy);
+until (place_empty((g * global.GridSize) + i, (h * global.GridSize) + j));
+c = instance_create((g * global.GridSize) + i, (h * global.GridSize) + j, objectBasicEnemy);
 with c
 {
 }
 
 global.Initiative = ds_grid_create(3, instance_number(objectBasicChar));
+// The player is always moving, for now.
+global.CurrentChar = c;
 </string>
           </argument>
         </arguments>
@@ -487,9 +493,10 @@ if ds_grid_height(global.Message) &lt; 1
             <kind>1</kind>
             <string>/// Draw Movement Grid
 
-/*draw_set_alpha(0.3);
+draw_set_alpha(0.3);
 mp_grid_draw(global.MovementGrid);
 draw_set_alpha(1);
+draw_text(mouse_x, mouse_y - 16, string(floor(mouse_x / global.GridSize)) + ", " + string(floor(mouse_y / global.GridSize)))
 </string>
           </argument>
         </arguments>

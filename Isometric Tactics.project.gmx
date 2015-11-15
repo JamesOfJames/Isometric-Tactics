@@ -67,6 +67,8 @@
       <script>scripts\scriptCheckBeforeMove.gml</script>
       <script>scripts\scriptTurnEnd.gml</script>
     </scripts>
+    <script>scripts\scriptMoveStep.gml</script>
+    <script>scripts\scriptMoveTurn.gml</script>
   </scripts>
   <objects name="objects">
     <object>objects\objectController</object>
@@ -86,6 +88,7 @@
     <object>objects\objectArmor</object>
     <object>objects\objectGun</object>
   </objects>
+  <timelines name="timelines"/>
   <rooms name="rooms">
     <room>rooms\room0</room>
   </rooms>

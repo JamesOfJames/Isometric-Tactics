@@ -26,6 +26,8 @@
           <argument>
             <kind>1</kind>
             <string>image_speed = 0;
+
+// Gun height standing = 9 plates
 </string>
           </argument>
         </arguments>
