@@ -8,6 +8,75 @@
   <parentName>&lt;undefined&gt;</parentName>
   <maskName>&lt;undefined&gt;</maskName>
   <events>
+    <event eventtype="2" enumb="0">
+      <action>
+        <libid>1</libid>
+        <id>603</id>
+        <kind>7</kind>
+        <userelative>0</userelative>
+        <isquestion>0</isquestion>
+        <useapplyto>-1</useapplyto>
+        <exetype>2</exetype>
+        <functionname></functionname>
+        <codestring></codestring>
+        <whoName>self</whoName>
+        <relative>0</relative>
+        <isnot>0</isnot>
+        <arguments>
+          <argument>
+            <kind>1</kind>
+            <string>/// Message Cycler
+
+</string>
+          </argument>
+        </arguments>
+      </action>
+    </event>
+    <event eventtype="3" enumb="2">
+      <action>
+        <libid>1</libid>
+        <id>603</id>
+        <kind>7</kind>
+        <userelative>0</userelative>
+        <isquestion>0</isquestion>
+        <useapplyto>-1</useapplyto>
+        <exetype>2</exetype>
+        <functionname></functionname>
+        <codestring></codestring>
+        <whoName>self</whoName>
+        <relative>0</relative>
+        <isnot>0</isnot>
+        <arguments>
+          <argument>
+            <kind>1</kind>
+            <string>/// Message Control
+
+// Check for new messages
+if !ds_queue_empty(global.NewMessage);
+{if alarm[0] &lt;= 0
+ {alarm[0] = MessageAlarm;}}
+ 
+// Check for too many messages
+if ds_grid_height(global.Message) &gt; MaxMessages
+{var a;
+ for (a = 0; a &lt; ds_grid_height(global.Message) - MaxMessages; a += 1)
+ {ds_grid_set(global.Message, 0, a, MessageAlarm);}}
+
+// Check for old messages
+if ds_grid_get(global.Message, 0, 0) &lt;= 0
+{var b, c;
+ for (b = 0; b &lt; ds_grid_height(global.Message); b += 1)
+ {for (c = 0; c &lt; 5; c += 1)
+  {ds_grid_set(global.Message, c, b, ds_grid_get(global.Message, c, b + 1));}}
+ ds_grid_resize(global.Message, 5, ds_grid_height(global.Message) - 1);}
+ 
+// Increment each step
+ds_grid_add_region(global.Message, 0, 0, 0, ds_grid_height(global.Message) - 1, -1);
+</string>
+          </argument>
+        </arguments>
+      </action>
+    </event>
     <event eventtype="7" enumb="10">
       <action>
         <libid>1</libid>
@@ -305,6 +374,12 @@ c++;
 global.Message = ds_grid_create(5, 0);
 // timeout, x, y, Message, opacity
 global.NewMessage = ds_queue_create();
+
+MessageLineHeight = 16;
+MessageAlarm = room_speed / 2;
+MsgScrollFactor = 
+
+//dcos()
 </string>
           </argument>
         </arguments>
@@ -451,24 +526,28 @@ global.CurrentChar = c;
             <string>/// Display Messages
 global.Message = ds_grid_create(5, 0);
 // timeout, x, y, Message, opacity
-/*
 
-if ds_grid_height(global.Message) &lt; 1
+
+if ds_grid_height(global.Message) &gt; 0
 {draw_set_alpha(1);
  draw_set_colour(c_black);
 
  var a, b, yy, c;
- a = ds_priority_find_max(global.Message); // Most recent message
+// a = ds_grid_height(global.Message) - 1; // Most recent message
  c = 16; // line height
- yy = view_hport[0] - c; // first line position
- for (b = a; b &gt; 0; b -= 1)
- {ds_priority_find_priority(id, val);
- 
-  min(
+ yy = view_hport[0] - (c * ds_grid_height(global.Message)); // top line position
+ for (b = 0; b &lt; ds_grid_height(global.Message) - 1; b += 1)
+ {draw_text(16, yy, ds_grid_get(global.Message, 
  
  
  } 
 }
+
+
+/// Create Message System
+global.Message = ds_grid_create(5, 0);
+// timeout, x, y, Message, opacity
+global.NewMessage = ds_queue_create();
 </string>
           </argument>
         </arguments>

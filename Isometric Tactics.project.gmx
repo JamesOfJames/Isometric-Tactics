@@ -88,7 +88,6 @@
     <object>objects\objectArmor</object>
     <object>objects\objectGun</object>
   </objects>
-  <timelines name="timelines"/>
   <rooms name="rooms">
     <room>rooms\room0</room>
   </rooms>
@@ -96,7 +95,7 @@
     <rtf>help.rtf</rtf>
   </help>
   <TutorialState>
-    <IsTutorial>0</IsTutorial>
+    <IsTutorial>-1</IsTutorial>
     <TutorialName>C:\Users\James Shepherd\AppData\Local\GameMaker-Studio\Tutorials\Basic_Isometric_Tutorial</TutorialName>
     <TutorialPage>6</TutorialPage>
   </TutorialState>

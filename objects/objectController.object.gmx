@@ -49,7 +49,9 @@
         <arguments>
           <argument>
             <kind>1</kind>
-            <string>randomize();
+            <string>/// Setup
+
+randomize();
 image_speed = 0;
 
 // Get the template tile used for defining the size of an isometric tile
@@ -153,7 +155,7 @@ with (objectSpace) event_user(0);
         <arguments>
           <argument>
             <kind>1</kind>
-            <string>/// Weapons
+            <string>/// Weapons &amp; Armor Data
 
 
 GunDmg = 3;
