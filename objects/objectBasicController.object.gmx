@@ -8,6 +8,29 @@
   <parentName>&lt;undefined&gt;</parentName>
   <maskName>&lt;undefined&gt;</maskName>
   <events>
+    <event eventtype="2" enumb="1">
+      <action>
+        <libid>1</libid>
+        <id>603</id>
+        <kind>7</kind>
+        <userelative>0</userelative>
+        <isquestion>0</isquestion>
+        <useapplyto>-1</useapplyto>
+        <exetype>2</exetype>
+        <functionname></functionname>
+        <codestring></codestring>
+        <whoName>self</whoName>
+        <relative>0</relative>
+        <isnot>0</isnot>
+        <arguments>
+          <argument>
+            <kind>1</kind>
+            <string>/// Message Fade-in
+</string>
+          </argument>
+        </arguments>
+      </action>
+    </event>
     <event eventtype="2" enumb="0">
       <action>
         <libid>1</libid>
@@ -26,7 +49,7 @@
           <argument>
             <kind>1</kind>
             <string>/// Message Cycler
-
+script_execute(scriptMessagePop);
 </string>
           </argument>
         </arguments>
@@ -54,7 +77,8 @@
 // Check for new messages
 if !ds_queue_empty(global.NewMessage);
 {if alarm[0] &lt;= 0
- {alarm[0] = MessageAlarm;}}
+ {if alarm[1] &lt;= 0
+  {alarm[0] = MessageAlarm;}}}
  
 // Check for too many messages
 if ds_grid_height(global.Message) &gt; MaxMessages
@@ -371,15 +395,14 @@ c++;
           <argument>
             <kind>1</kind>
             <string>/// Create Message System
-global.Message = ds_grid_create(5, 0);
-// timeout, x, y, Message, opacity
+global.Message = ds_grid_create(2, 0); // timeout, Message, (x, y, opacity?)
 global.NewMessage = ds_queue_create();
 
 MessageLineHeight = 16;
 MessageAlarm = room_speed / 2;
-MsgScrollFactor = 
-
-//dcos()
+MessageTimeout = room_speed * 10;
+LineSize = 16;
+MaxMessages = 16;
 </string>
           </argument>
         </arguments>
@@ -524,30 +547,42 @@ global.CurrentChar = c;
           <argument>
             <kind>1</kind>
             <string>/// Display Messages
-global.Message = ds_grid_create(5, 0);
-// timeout, x, y, Message, opacity
-
 
 if ds_grid_height(global.Message) &gt; 0
-{draw_set_alpha(1);
+{if alarm[0] &gt; 0 // If scrolling for a new message
+ {YOffset = (cos(pi * alarm[0] / MessageAlarm) + 1) / 2;} // Starts at 1 -&gt; 0 as the timer runs out
+ else
+ {YOffset = 0;}
+ 
+ // Draw text
  draw_set_colour(c_black);
 
- var a, b, yy, c;
-// a = ds_grid_height(global.Message) - 1; // Most recent message
- c = 16; // line height
- yy = view_hport[0] - (c * ds_grid_height(global.Message)); // top line position
- for (b = 0; b &lt; ds_grid_height(global.Message) - 1; b += 1)
- {draw_text(16, yy, ds_grid_get(global.Message, 
- 
- 
- } 
-}
+ var a, b, c, d;
+ b = ds_grid_height(global.Message) - 1; // Most recent message
+ for (a = 0; a &lt; b; a += 1)
+ {// Figure Opacity
+  c = 1;
+  d = ds_grid_get(global.Message, a, 0);
+  
+  // New Message
+  if a == b and alarm[1] &gt; 0
+  {if alarm[1] &gt; 0
+   {c = min(c, alarm[1] / MessageAlarm);}}
+  
+  // Too Many Messages
+  if a == 0
+  {if b + 1 &gt;= MaxMessages
+   {if alarm[1] &gt; 0
+    {c = min(c, (MessageAlarm - alarm[1]) / MessageAlarm);}}}
+  
+  // Old Message
+  if d &lt; MessageAlarm
+  {c = min(c, d / MessageAlarm);}
 
-
-/// Create Message System
-global.Message = ds_grid_create(5, 0);
-// timeout, x, y, Message, opacity
-global.NewMessage = ds_queue_create();
+  draw_set_alpha(c);
+ 
+  yy = view_hport[0] - (LineSize * (ds_grid_height(global.Message) - a)) + YOffset; // top line position
+  draw_text(16, yy, ds_grid_get(global.Message, a, 1));}}
 </string>
           </argument>
         </arguments>

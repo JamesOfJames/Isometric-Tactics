@@ -56,6 +56,7 @@
     </scripts>
     <scripts name="Messages">
       <script>scripts\scriptMessageAdd.gml</script>
+      <script>scripts\scriptMessagePop.gml</script>
     </scripts>
     <scripts name="Characters">
       <script>scripts\scriptHealthCheck.gml</script>
@@ -95,7 +96,7 @@
     <rtf>help.rtf</rtf>
   </help>
   <TutorialState>
-    <IsTutorial>-1</IsTutorial>
+    <IsTutorial>0</IsTutorial>
     <TutorialName>C:\Users\James Shepherd\AppData\Local\GameMaker-Studio\Tutorials\Basic_Isometric_Tutorial</TutorialName>
     <TutorialPage>6</TutorialPage>
   </TutorialState>

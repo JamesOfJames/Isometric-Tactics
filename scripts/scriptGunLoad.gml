@@ -27,7 +27,7 @@ with b
  LC = ds_grid_get(global.GunList, 19, a); // Legality
  Ammo = GunMagSize;}
  
-show_debug_message("Equipping " + b.GunName + "...");
+script_execute(scriptMessageAdd, "Equipping " + b.GunName + "...");
 
 a = argument0;
 

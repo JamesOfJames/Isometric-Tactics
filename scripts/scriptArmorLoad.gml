@@ -20,7 +20,7 @@ with b
  LowDR = MaxLowDR;
  ArmDamageRatio = MaxDR / MaxLowDR;}
 
-show_debug_message("Equipping " + b.ArmName + "...");
+script_execute(scriptMessageAdd, "Equipping " + b.ArmName + "...");
 
 return b;
 

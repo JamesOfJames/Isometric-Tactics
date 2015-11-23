@@ -9,7 +9,7 @@ d = argument1;
 i = argument2;
 j = argument3;
 
-show_debug_message(string(a.Name) + " is attacking " + string(d.Name));
+script_execute(scriptMessageAdd, string(a.Name) + " is attacking " + string(d.Name));
 
 if i.Ammo > 0
 {// Has ammo
@@ -56,7 +56,7 @@ if point_distance(a.x, a.y, d.x, d.y) <= i.GunRange
  for (e = 0; e < array_length_1d(RapidFire); e += 1)
  {if i.GunROF > RapidFire[e] {f = e;}}
  
-// show_debug_message("Skill of " + string(a.SkillGuns) + " + " + string(b) + " for aim, + " + string(c) + " for range, + " + string(f) + " for rapid fire");
+// script_execute(scriptMessageAdd, "Skill of " + string(a.SkillGuns) + " + " + string(b) + " for aim, + " + string(c) + " for range, + " + string(f) + " for rapid fire");
  a.EffectiveSkill = a.SkillGuns + b + d.Size + c + f - a.Shock;
  a.AttackRoll = script_execute(scriptDiceRoll);
 
@@ -72,8 +72,8 @@ if point_distance(a.x, a.y, d.x, d.y) <= i.GunRange
    else {a.Hits = 1;}}
   else {a.Hits = 0;}}
      
- if a.AttackRoll <= a.EffectiveSkill {show_debug_message("Attacker rolls " + string(a.AttackRoll) + " against an effective skill of " + string(a.EffectiveSkill) + ", hitting up to " + string(a.Hits) + " times");}
- else {{show_debug_message("Attacker rolls " + string(a.AttackRoll) + " against an effective skill of " + string(a.EffectiveSkill) + ", missing");}}
+ if a.AttackRoll <= a.EffectiveSkill {script_execute(scriptMessageAdd, "Attacker rolls " + string(a.AttackRoll) + " against an effective skill of " + string(a.EffectiveSkill) + ", hitting up to " + string(a.Hits) + " times");}
+ else {{script_execute(scriptMessageAdd, "Attacker rolls " + string(a.AttackRoll) + " against an effective skill of " + string(a.EffectiveSkill) + ", missing");}}
 
  a.Critical = false;
  d.Critical = false;
@@ -92,17 +92,17 @@ if point_distance(a.x, a.y, d.x, d.y) <= i.GunRange
    if d.DodgeRoll > 5
    {if d.DodgeRoll > d.Dodge
     {// Failed Dodge
-     show_debug_message("Defender rolls " + string(d.DodgeRoll) + " against a dodge of " + string(d.Dodge) + " and fails to dodge");
+     script_execute(scriptMessageAdd, "Defender rolls " + string(d.DodgeRoll) + " against a dodge of " + string(d.Dodge) + " and fails to dodge");
      d.NumberDodged = 0;}
     else
     {// Successful Dodge
      // # of dodged hits
      d.NumberDodged = max(d.Dodge - d.DodgeRoll, 1);
-     show_debug_message("Defender rolls " + string(d.DodgeRoll) + " against a dodge of " + string(d.Dodge) + " and dodges " + string(d.NumberDodged) + " hits");}}
+     script_execute(scriptMessageAdd, "Defender rolls " + string(d.DodgeRoll) + " against a dodge of " + string(d.Dodge) + " and dodges " + string(d.NumberDodged) + " hits");}}
    else
    {// Critical Dodge
     d.Critical = true;
-    show_debug_message("Defender rolls " + string(d.DodgeRoll) + " and dodges all hits");}}
+    script_execute(scriptMessageAdd, "Defender rolls " + string(d.DodgeRoll) + " and dodges all hits");}}
  else
  {// Missed - failed attack roll
   if a.AttackRoll > 16 // Critical Failure of attack roll
@@ -124,11 +124,11 @@ if point_distance(a.x, a.y, d.x, d.y) <= i.GunRange
    else
    {// Defender's Armor does not absorb Attaker's damage type
     d.DQ = j.LowDR / (d.HP + j.LowDR);}
-// show_debug_message("Damage Quotient: " + string(d.DQ) + "; using high DR? " + string(h));
+// script_execute(scriptMessageAdd, "Damage Quotient: " + string(d.DQ) + "; using high DR? " + string(h));
     d.ArmorDamage = round(d.DQ * a.DamageRoll);
     d.HealthDamage = a.DamageRoll - d.ArmorDamage;
     j.ArmorWear = 0;   
-// show_debug_message("d.ArmorDamage " + string(d.ArmorDamage) + ", j.LowDR " + string(j.LowDR) + ", j.DR " + string(j.DR) + ", j.ArmDamageRatio " + string(j.ArmDamageRatio) + ", j.ArmorWear " + string(j.ArmorWear));
+// script_execute(scriptMessageAdd, "d.ArmorDamage " + string(d.ArmorDamage) + ", j.LowDR " + string(j.LowDR) + ", j.DR " + string(j.DR) + ", j.ArmDamageRatio " + string(j.ArmDamageRatio) + ", j.ArmorWear " + string(j.ArmorWear));
     if d.DQ > 0
     {if !h
      {// Deal Damage to Armor using LowDR
@@ -139,7 +139,7 @@ if point_distance(a.x, a.y, d.x, d.y) <= i.GunRange
         j.ArmorWear += 1;
         if j.LowDR <= 0
         {// Armor broke!
-         show_debug_message("Defender's armor broke with " + d.ArmorDamage + " damage to armor left, on top of " + d.HealthDamage + "!");}}
+         script_execute(scriptMessageAdd, "Defender's armor broke with " + d.ArmorDamage + " damage to armor left, on top of " + d.HealthDamage + "!");}}
         d.ArmorDamage -= j.LowDR;}}
      else 
      {// Deal Damage to Armor using DR
@@ -150,28 +150,28 @@ if point_distance(a.x, a.y, d.x, d.y) <= i.GunRange
         j.LowDR -= j.ArmDamageRatio;
         if j.DR <= 0
         {// Armor broke!
-         show_debug_message("Defender's armor broke with " + d.ArmorDamage + " damage to armor left, on top of " + d.HealthDamage + "!");}}
+         script_execute(scriptMessageAdd, "Defender's armor broke with " + d.ArmorDamage + " damage to armor left, on top of " + d.HealthDamage + "!");}}
         d.ArmorDamage -= j.DR;}}
     if d.ArmorDamage > 0 // Armor was broken
     {d.HealthDamage += d.ArmorDamage;}}
     d.PenetratingDamage = max(d.HealthDamage, 0);
     d.HP -= d.PenetratingDamage;
     if d.PenetratingDamage > 0 {d.RecentlyWounded = true;} // for purposes of re-checking certain potentially fatal injuries
-    show_debug_message("Attacker hit \#" + string(e + 1) + ": " + string(a.DamageRoll) + ", which reduces armor by " + string(j.ArmorWear) + ", with " + string(d.PenetratingDamage) + " penetrating, leaving defender at " + string(d.HP));
+    script_execute(scriptMessageAdd, "Attacker hit \#" + string(e + 1) + ": " + string(a.DamageRoll) + ", which reduces armor by " + string(j.ArmorWear) + ", with " + string(d.PenetratingDamage) + " penetrating, leaving defender at " + string(d.HP));
     // Shock
     d.Shock += floor(d.PenetratingDamage * (1 / max(1, d.MaxHP / 10)));
     d.Shock = max(4, d.Shock);
-    show_debug_message("shock: " + string(d.Shock));
+    script_execute(scriptMessageAdd, "shock: " + string(d.Shock));
     script_execute(scriptHealthCheck, d);
     }}}
  else
  {// Out of Range
-  show_debug_message("Out of Range");
+  script_execute(scriptMessageAdd, "Out of Range");
  }
 }
 else
 {// Out of ammo
-  show_debug_message("Out of Ammo; reloading...");
+  script_execute(scriptMessageAdd, "Out of Ammo; reloading...");
   with i
   {event_user(0);} // Gun: Reload
 }
