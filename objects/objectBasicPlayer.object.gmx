@@ -144,7 +144,7 @@ event_user(0); // Center screen on me
         <arguments>
           <argument>
             <kind>1</kind>
-            <string>draw_text(32, 32, string(floor(mouse_x / global.GridSize)) + ", " + string(floor(mouse_y / global.GridSize)) + "#" + string(x) + ", " + string(y) + "#Moves: " + string(Moves));
+            <string>draw_text(32, 32, string(floor(mouse_x / global.GridSize)) + ", " + string(floor(mouse_y / global.GridSize)) + "#[Left click] to move#[Space] to attack#[Arrow Keys] to scroll" );// + "#" + string(x) + ", " + string(y) + "#Moves: " + string(Moves));
 </string>
           </argument>
         </arguments>

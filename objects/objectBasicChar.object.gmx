@@ -399,7 +399,7 @@ view_yview[0] = y - (view_hview[0] / 2);
             <kind>1</kind>
             <string>draw_self();
 draw_path(Path, 0, 0, true);
-draw_text(x, y + 32, string(path_get_number(Path)) + ", " + string(PathPoint));
+//draw_text(x, y + 32, string(path_get_number(Path)) + ", " + string(PathPoint));
 </string>
           </argument>
         </arguments>

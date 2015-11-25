@@ -1,4 +1,4 @@
-if !ds_queue_empty(global.NewMessage);
+if !ds_queue_empty(global.NewMessage)
 {var a, b;
  a = ds_queue_dequeue(global.NewMessage);
  
