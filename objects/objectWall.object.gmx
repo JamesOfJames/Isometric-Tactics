@@ -77,7 +77,8 @@ depth = -y;
         <arguments>
           <argument>
             <kind>1</kind>
-            <string>draw_self();
+            <string>image_alpha = .5;
+draw_self();
 /*depth -= 10000;
 draw_sprite(object_get_mask(object_index), 0, x, y);
 depth += 10000;

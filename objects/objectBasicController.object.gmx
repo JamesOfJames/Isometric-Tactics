@@ -3,7 +3,7 @@
   <spriteName>&lt;undefined&gt;</spriteName>
   <solid>-1</solid>
   <visible>-1</visible>
-  <depth>-99999</depth>
+  <depth>99999</depth>
   <persistent>0</persistent>
   <parentName>&lt;undefined&gt;</parentName>
   <maskName>&lt;undefined&gt;</maskName>
@@ -505,7 +505,7 @@ for (e = 0; e &lt; H; e += 1)
   {// Generate a wall
    if irandom(1) == 1
    {// Vertical wall
-    if e + 2 &lt; H
+    if e + 2 &lt; H - 1
     {mask_index = spriteWall;
      image_index = 0;
      if place_empty(d * gs, e * gs)
@@ -514,10 +514,12 @@ for (e = 0; e &lt; H; e += 1)
       f.GridY = e;
       f.z = 1;
       f.image_index = 0;
-      f.depth = -f.y;}}}
+      f.depth = -f.y;}
+     else
+     {show_debug_message(string(d) + "," +string(3)+" isn't clear for a V wall");}}}
    else
    {// Horizontal wall
-    if d + 2 &lt; W
+    if d + 2 &lt; W - 1
     mask_index = spriteWall;
     image_index = 1;
     {if place_empty(d * gs, e * gs)
@@ -526,34 +528,40 @@ for (e = 0; e &lt; H; e += 1)
       f.GridY = e;
       f.z = 1;
       f.image_index = 1;
-      f.depth = -f.y;}}}}}}
+      f.depth = -f.y;}
+     else
+     {show_debug_message(string(d) + "," +string(3)+" isn't clear for an H wall");}}}}}}
 
-path_finder_grid_instance_set_as_wall(global.MovementGrid, gs, 0, 0, objectWall);
-/*
+path_finder_grid_instance_set_as_wall(global.MovementGrid, gs, objectWall);
+
 // Figure Clearance Grids based on permenant obstacles
 global.ClearanceGrid = ds_grid_create(W, H);
 var k, l, m;
-for (e = H - 1; e &gt;= 0; e -= 1) // check from right
-{for (d = W - 1; d &gt;= 0; d -= 1) // check from bottom
- {for (k = 0; k &gt;= max(d, e); k += 1) // check k = agent size clearance
-  {for (l = e; l &gt;= e - k; l -= 1) // check from right to k spaces left
-   {for (m = d; m &gt;= d - k; m -= 1) // check from bottom to k spaces up
-    {show_debug_message("checking " + string(l) + ", " + string(m));
-     if global.MovementGrid[#l, m] != 0
-     {show_debug_message("not clear; max clearance is " + string(k));
-      ds_grid_set(global.ClearanceGrid, d, e, k);}}}}}}
-*/
+for (e = H - 1; e &gt;= 0; e -= 1) // check from bottom
+{for (d = W - 1; d &gt;= 0; d -= 1) // check from right
+ {show_debug_message("checking " + string(d) + ", " + string(e));
+  for (k = 1; k &lt; 3 /*min(d, e)*/; k += 1) // check k = agent size clearance
+  {show_debug_message("  size: " + string(k));
+   for (m = e; m &gt; e - k; m -= 1) // check from bottom to k spaces up
+   {for (l = d; l &gt; d - k; l -= 1) // check from right to k spaces left
+    {show_debug_message("   checking " + string(l) + ", " + string(m));
+     if path_finder_grid_in_bounds(global.MovementGrid, l, m)
+     {if global.MovementGrid[#l, m] != 0
+      {show_debug_message("max clearance is " + string(k));
+       ds_grid_set(global.ClearanceGrid, d, e, k - 1);
+       break;}}}}}}}
+
 image_index = 0;
 
 // Create Player  
 var c, g, h, i, j;
-i = sprite_get_xoffset(object_get_sprite(objectBasicPlayer));
-j = sprite_get_yoffset(object_get_sprite(objectBasicPlayer));
+i = sprite_get_xoffset(object_get_sprite(objectBasicPlayer)) mod gs;
+j = sprite_get_yoffset(object_get_sprite(objectBasicPlayer)) mod gs;
 mask_index = object_get_sprite(objectBasicPlayer);
 do
 {g = irandom(W);
  h = irandom(H);}
-until (place_free((g * gs) + i, (h * gs) + j));
+until (place_empty((g * gs) + i, (h * gs) + j));
 c = instance_create((g * gs) + i, (h * gs) + j, objectBasicPlayer);
 with c
 {
@@ -563,13 +571,13 @@ with c
 global.CurrentChar = c;
 
 // Create Enemy
-i = sprite_get_xoffset(object_get_sprite(objectBasicEnemy));
-j = sprite_get_yoffset(object_get_sprite(objectBasicEnemy));
+i = sprite_get_xoffset(object_get_sprite(objectBasicEnemy)) mod gs;
+j = sprite_get_yoffset(object_get_sprite(objectBasicEnemy)) mod gs;
 mask_index = object_get_sprite(objectBasicEnemy);
 do
 {g = irandom(W);
  h = irandom(H);}
-until (place_free((g * gs) + i, (h * gs) + j));
+until (place_empty((g * gs) + i, (h * gs) + j));
 c = instance_create((g * gs) + i, (h * gs) + j, objectBasicEnemy);
 with c
 {
@@ -577,7 +585,7 @@ with c
 
 global.Initiative = ds_grid_create(3, instance_number(objectBasicChar));
 
-path_finder_grid_instance_set_as_wall(global.MovementGrid, gs, gs, gs, objectBasicChar);
+path_finder_grid_instance_set_as_wall(global.MovementGrid, gs, objectBasicChar);
 
 TerrainMap = ds_map_create();
 //I Reccomend Creating Constants for your Terrain types but since constants don't ship with Marketplace Assets they are real values
@@ -617,131 +625,6 @@ script_execute(scriptMessageAdd, "Scroll the map with the arrow keys.");
 script_execute(scriptMessageAdd, "Next up, figure movement with 2x2 characters, figure line-of-sight attacking, &amp; rework the perspective to isometric.");
 script_execute(scriptMessageAdd, "Please send feedback to iamjamesshepherd@gmail.com or @JamesOfJames on twitter!");
 script_execute(scriptMessageAdd, "-------------------------------------------------------------------------------------------------");
-</string>
-          </argument>
-        </arguments>
-      </action>
-      <action>
-        <libid>1</libid>
-        <id>603</id>
-        <kind>7</kind>
-        <userelative>0</userelative>
-        <isquestion>0</isquestion>
-        <useapplyto>-1</useapplyto>
-        <exetype>2</exetype>
-        <functionname></functionname>
-        <codestring></codestring>
-        <whoName>self</whoName>
-        <relative>0</relative>
-        <isnot>0</isnot>
-        <arguments>
-          <argument>
-            <kind>1</kind>
-            <string>/// OLD Setup Play
-
-/*
-
-randomize();
-image_speed = 0;
-
-// Get the template tile used for defining the size of an isometric tile
-templateTile = spriteStud;
-global.TileHeight = sprite_get_bbox_bottom(templateTile) - sprite_get_bbox_top(templateTile);
-global.TileWidth = sprite_get_bbox_right(templateTile) - sprite_get_bbox_left(templateTile);
-global.PlateHeight = sprite_get_height(templateTile) - sprite_get_bbox_bottom(templateTile);
-if global.TileHeight mod 2 != 0 {global.TileHeight++;}
-if global.TileWidth mod 2 != 0 {global.TileWidth++;}
-
-// Find grid size, create grid
-global.GridSize = 32 // arbitrary, for now.
-GridWidth = 36; // arbitrary, for now.
-GridHeight = 36; // arbitrary, for now.
-global.MovementGrid = mp_grid_create(0, 0, GridWidth, GridHeight, global.GridSize, global.GridSize);
-global.Grid = ds_grid_create(GridWidth, GridHeight);
-ds_grid_clear(global.Grid, 0);
-    
-// Create Walls &amp; Floor
-var d, e, f;
-for (e = 0; e &lt; ds_grid_height(global.Grid); e += 1)
-{for (d = 0; d &lt; ds_grid_width(global.Grid); d += 1) 
- {if random(1) &lt; .02
-  {// Generate a wall
-   if irandom(1) == 1
-   {// Vertical wall
-    if e + 2 &lt; ds_grid_height(global.Grid)
-    {mask_index = spriteWall;
-     image_index = 1;
-     if place_free(d * global.GridSize, e * global.GridSize)
-     {f = instance_create(d * global.GridSize, e * global.GridSize, objectWall);
-      f.GridX = d;
-      f.GridY = e;
-      f.z = 1;
-      f.image_index = 0;
-      f.depth = -f.y;}}}
-   else
-   {// Horizontal wall
-    if d + 2 &lt; ds_grid_width(global.Grid)
-    {mask_index = spriteWall;
-     image_index = 0;
-     if place_free(d * global.GridSize, e * global.GridSize)
-     {f = instance_create(d * global.GridSize, e * global.GridSize, objectWall);
-      f.GridX = d;
-      f.GridY = e;
-      f.z = 1;
-      f.image_index = 1;
-      f.depth = -f.y;}}}}
-  // Floor
-/*  if d mod 6 == 0 and e mod 6 == 0
-  {f = instance_create(script_execute(scriptIsoToCoordX, d, e), script_execute(scriptIsoToCoordY, d, e), objectSpace);
-   f.GridX = d;
-   f.GridY = e;
-   f.z = 0;
-   f.depth = -script_execute(scriptCoordsToIsoX, f.x, f.y) - script_execute(scriptCoordsToIsoY, f.x, f.y) - (10 * f.z);
-   if (d + e) mod 2 != 0
-   {f.sprite_index = spriteSpace2}}*/
-   /*
-   }}
-
-// Translate raw data to grids
-/*mask_index = spriteBasicPlayer;
-var a, b;
-for (a = 0; a &lt; GridHeight; a += 1)
-{for (b = 0; b &lt; GridWidth; b += 1)
- {if !place_free(b * global.GridSize, a * global.GridSize)
-  {mp_grid_add_cell(global.MovementGrid, b, a);}}}*/
-  /*
-mp_grid_add_instances(global.MovementGrid, objectWall, true);
-
-     
-// Create Player  
-var c, g, h, i, j;
-i = sprite_get_xoffset(object_get_sprite(objectBasicPlayer));
-j = sprite_get_yoffset(object_get_sprite(objectBasicPlayer));
-do
-{g = irandom(GridWidth);
- h = irandom(GridHeight);}
-until (place_empty((g * global.GridSize) + i, (h * global.GridSize) + j));
-c = instance_create((g * global.GridSize) + i, (h * global.GridSize) + j, objectBasicPlayer);
-with c
-{
-}
-
-// The player is always moving, for now.
-global.CurrentChar = c;
-
-// Create Enemy
-i = sprite_get_xoffset(object_get_sprite(objectBasicEnemy));
-j = sprite_get_yoffset(object_get_sprite(objectBasicEnemy));
-do
-{g = irandom(GridWidth);
- h = irandom(GridHeight);}
-until (place_empty((g * global.GridSize) + i, (h * global.GridSize) + j));
-c = instance_create((g * global.GridSize) + i, (h * global.GridSize) + j, objectBasicEnemy);
-with c
-{
-}
-
-global.Initiative = ds_grid_create(3, instance_number(objectBasicChar));
 </string>
           </argument>
         </arguments>
@@ -837,11 +720,11 @@ draw_text(mouse_x, mouse_y - 16, string(floor(mouse_x / global.GridSize)) + ", "
 // NEW SHIT
 var gs = global.GridSize;
 var S, G;
-/*
-// Draws the Path Finder Grid
-demo_path_finder_grid_draw(global.MovementGrid,gs,gs,gs) ;
 
-if (ds_exists(TruePath, ds_type_list))
+// Draws the Path Finder Grid
+//demo_path_finder_grid_draw(global.MovementGrid, gs, 0, 0) ;
+
+/*if (ds_exists(TruePath, ds_type_list))
 {draw_text(32, view_hview[0] - 32, "Length of Path: " + string(TruePathLength));}
 else
 {draw_text(32, view_hview[0] - 32, "No Path to Goal");}
@@ -855,6 +738,7 @@ draw_set_colour(c_blue);
 if (path_finder_can_reach_goal(Paths, S, G))
 {demo_path_finder_grid_draw_true_path(global.MovementGrid, Paths,gs,gs,gs,S,G);}
 
+
 draw_set_colour(c_white);
 draw_set_halign(fa_center);
 draw_set_valign(fa_center);
@@ -865,7 +749,7 @@ draw_text((path_finder_grid_cell_get_x(global.MovementGrid, G) + .5) * gs + gs,(
 
 // Draws the Costs
 if (ShowCosts)
-{demo_path_finder_draw_costs(global.MovementGrid,Costs, gs, gs, gs);}
+{demo_path_finder_draw_costs(global.MovementGrid, Costs, gs, gs, gs);}
 </string>
           </argument>
         </arguments>

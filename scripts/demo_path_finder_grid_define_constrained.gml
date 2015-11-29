@@ -16,4 +16,4 @@ for(var i = 0 ; i < W ; i++)
 
 
 path_finder_grid_instance_set_as_index(argument0,32,32,32,obj_one_way_door,2) ;
-path_finder_grid_instance_set_as_wall(argument0,32,32,32,obj_wall) ;
+path_finder_grid_instance_set_as_wall(argument0,32,obj_wall) ;
