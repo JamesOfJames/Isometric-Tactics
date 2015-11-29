@@ -57,7 +57,7 @@
  a.GridX = GridX
  a.GridY = GridY
  a.depth = -y - a.Height;
- a.image_index = round(point_direction(path_get_x(path, .01), path_get_y(path, .01), GridX, GridY) / 90); 
+ a.image_index = round(point_direction(path_get_x(path, .01), path_get_y(path, .01), GridX, GridY) / 45); 
  with (a) event_user(0);
  with (objectSpace) event_user(0);}
 </string>

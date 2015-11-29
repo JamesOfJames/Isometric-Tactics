@@ -91,6 +91,7 @@ depth = -GridX - GridY - (10 * z);
 Path = path_add();
 PathPoint = -1;
 NextDirection = 0;
+FacingDirection = 0;
 StepTimer = room_speed / 2;
 TurnTimer = room_speed / 4;
 </string>
@@ -141,7 +142,7 @@ script_execute(scriptMoveStep);
             <kind>1</kind>
             <string>// Paused to turn; now turn and pause to step forward
 
-image_angle = NextDirection;
+FacingDirection = NextDirection;
 alarm[1] = StepTimer;
 </string>
           </argument>
@@ -165,7 +166,7 @@ alarm[1] = StepTimer;
         <arguments>
           <argument>
             <kind>1</kind>
-            <string>if Moves &lt;= 0
+            <string>/*if Moves &lt;= 0
 {Moves = Speed;
  with (objectSpace) event_user(0);}
 </string>
@@ -241,90 +242,150 @@ script_execute(scriptTurnEnd);
         <arguments>
           <argument>
             <kind>1</kind>
-            <string>/// Movement - find route
+            <string>/*/// NEWSHIT
 
-var xx, yy; //path;
+var gs = global.GridSize;
+
+// Relative target coordinates
+var X = floor(mouse_x / gs) - 1;
+var Y = floor(mouse_y / gs) - 1;
+
+
+{//Finds that Cell ID
+ var Cell = path_finder_grid_cell_get_id(global.MovementGrid, X, Y);
+ G = Cell;
+
+
+
+//If we know of a Path to the goal already, we can use it
+if (path_finder_can_reach_goal(MyPaths,MyCell,TargetCell))
+{
+PathList = path_finder_path_to_goal(MyPaths,MyCell,TargetCell) ;
+GameMakerPath = path_finder_list_to_path(MyGraph,PathList,32,32,32)
+}
+else //Otherwise we need to find another
+{
+MyPaths =
+path_finder_a_star_search(MyGraph,MyWeights,MyCell,TargetCell,PF_Return_Path);
+}*/
+/*
+
+//Regenerate the Weights
+MyWeights = path_finder_grid_declare_weights(MyGraph, TerrainMap, 1);
+
+//Loop through each of the Path and destroy everything to do with them
+ds_map_destroy(Paths);
+ds_list_destroy(TruePath); 
+ds_map_destroy(Costs);
+
+//Regenerate what we need.
+Paths = path_finder_a_star_search_8d_weighted(MyGraph, MyWeights, S, G, 0, MoveWeight);
+
+//Fills the Costs Array with costs for Dijkstra and A* Methods
+Costs = path_finder_a_star_search_8d_weighted(MyGraph,MyWeights, S, G, 1, MoveWeight);
+
+if (path_finder_can_reach_goal(Paths, S, G))
+{TruePath = path_finder_path_to_goal(Paths, S, G);
+ TruePathLength = ds_list_size(TruePath);}}
+</string>
+          </argument>
+        </arguments>
+      </action>
+      <action>
+        <libid>1</libid>
+        <id>603</id>
+        <kind>7</kind>
+        <userelative>0</userelative>
+        <isquestion>0</isquestion>
+        <useapplyto>-1</useapplyto>
+        <exetype>2</exetype>
+        <functionname></functionname>
+        <codestring></codestring>
+        <whoName>self</whoName>
+        <relative>0</relative>
+        <isnot>0</isnot>
+        <arguments>
+          <argument>
+            <kind>1</kind>
+            <string>/*/// Movement - find route, NEWSTUFF
+
+var xx, yy, S, G;
+var gs = global.GridSize;
 
 // Destination coords
-xx = (global.GridSize * floor(mouse_x / global.GridSize)) + XOffset;
-yy = (global.GridSize * floor(mouse_y / global.GridSize)) + YOffset;
+x1 = floor(x / gs) - 1 + XOffset;
+y1 = floor(y / gs) - 1 + YOffset;
 
-//path = path_add();
+x2 = floor(mouse_x / gs) - 1 + XOffset;
+y2 = floor(mouse_y / gs) - 1 + YOffset;
 
-// if xx == median(max mpgrid x, min mpgrid x, xx) and yy == median(max mpgrid y, min mpgrid y, yy) // Check to see if destiniation is on-grid.
-// Is the destination free?
-if place_free(xx, yy)
-{// Plot a course
- mp_grid_path(global.MovementGrid, Path, x, y, xx, yy, false);
-  
- path_get_number(Path);
-  // Start
- PathPoint = 0;
- script_execute(scriptMoveTurn);
+// If the cell is inside the grid
+if path_finder_grid_in_bounds(global.MovementGrid, X, Y)
+{// Get Cell Refernces
+ S = path_finder_grid_cell_get_id(global.MovementGrid, x1, y1);
+ G = path_finder_grid_cell_get_id(global.MovementGrid, x2, y2);
 
-/* // Quick Path clean-up
- var a;
- a = 0;
- path_change_point(Path, a, path_get_point_x(Path, a) + (global.GridSize / 2), path_get_point_y(Path, a) + (global.GridSize / 2), path_get_speed(Path, a));
- a = path_get_number(path) - 1;
- path_change_point(Path, a, path_get_point_x(Path, a) + (global.GridSize / 2), path_get_point_y(Path, a) + (global.GridSize / 2), path_get_speed(Path, a));*/
+ // Paths generated from the algorithm
+ Paths = path_finder_a_star_search_8d_weighted(global.MovementGrid, MyWeights, S, G, 0, MoveWeight);
  
+ // Costs for A* Method
+ Costs = path_finder_a_star_search_8d_weighted(global.MovementGrid, MyWeights, S, G, 1, MoveWeight);
 
-  
-  
- /*// While destination is still 1 space or more away &amp; there is a path to the destination...
- while ((point_distance(x, y, xx, yy) &gt; global.GridSize) and mp_potential_path(path, xx, yy, 4, 6, false))
- {
-  // Consider building an MP grid for each z layer (of permenant terrain only?) - good for tracing line-of-sight
-  // Then, when need to move, condense them down to one overall grid, [add the characters to it if needed] and plan movement on that?
-  
-  
+ //If you can find the goal in each of the paths we'll grab the one from the start to the goal and store it in TruePath (as a ds_list) and PathPath as an actual Path
+ if (path_finder_can_reach_goal(Paths, S, G))
+ {TruePath = path_finder_path_to_goal(Paths, S, G);
+  if (ds_exists(TruePath, ds_type_list)) {TruePathLength = ds_list_size(TruePath);}
+ PathPath = path_finder_list_to_path(global.MovementGrid, TruePath, 32, 32, 32);}}
 
-  // Plot a course
-  // mp_potential_settings(90, 180, 8, true);
-  //mp_potential_path(path, xx, yy, 4, 6, false);
- 
-  // Other movement options:
-  //mp_potential_step(xgoal, ygoal, stepsize, checkall);
-  //mp_potential_step_object(xgoal, ygoal, stepsize, obj);
-   
-  // What direction does the path begin in?
-  var CurX, CurY, NextX, NextY, PathDir, AngleDiffs, a;
- 
-  CurX = path_get_x(path, 0);
-  CurY = path_get_y(path, 0);
-  NextX = path_get_x(path, 0.1);
-  NextY = path_get_y(path, 0.1);
-  PathDir = point_direction(CurX, CurY, NextX, NextY);
- 
-  // Figure best ways to head toward; currently written to check 90-deg increments.
-  AngleDiffs = ds_grid_create(2, 4);
-  for (a = 0; a &lt; 4; a += 1)
-  {ds_grid_set(AngleDiffs, 0, a, a * 90);
-   ds_grid_set(AngleDiffs, 1, a, abs(angle_difference(PathDir, 0)));}
-  ds_grid_sort(AngleDiffs, 1, true);
-  
-  // Which way is clear?  Take the next-best if blocked; stop / fail if none.
-  var b, c, d, e;
-  for (a = 0; a &lt; 4; a += 1)
-  {b = ds_grid_get(AngleDiffs, 0, a);
-    show_debug_message("option: " + string(a) + "; direction: " + string(b));
-   c = lengthdir_x(global.GridSize, b);
-   d = lengthdir_y(global.GridSize, b);
-   if place_free(x + c, y + d)
-   {//MoveDirection = b;
-    x += c;
-    y += d;
-    event_user(0);
-    break;}}
-   
-  ds_grid_destroy(AngleDiffs);
- } // LOOP END*/
+//Fetchs the Relative Coordinates for the grid
+var X = floor(mouse_x / gs) - 1;
+var Y = floor(mouse_y / gs) - 1;
+
+//Finds that Cell ID
+var Cell = path_finder_grid_cell_get_id(MyGraph, X, Y);
+G = Cell;
+
+/*
+//If we know of a Path to the goal already, we can use it
+if (path_finder_can_reach_goal(MyPaths,MyCell,TargetCell))
+{
+PathList = path_finder_path_to_goal(MyPaths,MyCell,TargetCell) ;
+GameMakerPath = path_finder_list_to_path(MyGraph,PathList,32,32,32)
 }
-else
-{// The destination isn't clear.
-}
-//path_delete(path);
+else //Otherwise we need to find another
+{
+MyPaths =
+path_finder_a_star_search(MyGraph,MyWeights,MyCell,TargetCell,PF_Return_Path);
+}*/
+
+/*
+//Regenerate the Weights
+MyWeights = path_finder_grid_declare_weights(MyGraph, TerrainMap, 1);
+
+//Loop through each of the Path and destroy everything to do with them
+ds_map_destroy(Paths);
+ds_list_destroy(TruePath); 
+ds_map_destroy(Costs);
+
+//Regenerate what we need.
+Paths = path_finder_a_star_search_8d_weighted(MyGraph, MyWeights, S, G, 0, MoveWeight);
+
+//Fills the Costs Array with costs for Dijkstra and A* Methods
+Costs = path_finder_a_star_search_8d_weighted(MyGraph,MyWeights, S, G, 1, MoveWeight);
+
+if (path_finder_can_reach_goal(Paths, S, G))
+{TruePath = path_finder_path_to_goal(Paths, S, G);
+ TruePathLength = ds_list_size(TruePath);}
+
+
+
+
+
+// Old things, need updating
+/*path_get_number(Path);
+// Start
+PathPoint = 0;
+script_execute(scriptMoveTurn);
 </string>
           </argument>
         </arguments>

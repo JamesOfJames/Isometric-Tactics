@@ -3,7 +3,28 @@
   <Configs name="configs">
     <Config>Configs\Default</Config>
   </Configs>
-  <NewExtensions/>
+  <datafiles number="1" name="datafiles">
+    <datafile>
+      <name>Pathfind Extended.pdf</name>
+      <exists>-1</exists>
+      <size>471460</size>
+      <exportAction>2</exportAction>
+      <exportDir></exportDir>
+      <overwrite>0</overwrite>
+      <freeData>-1</freeData>
+      <removeEnd>0</removeEnd>
+      <store>0</store>
+      <ConfigOptions>
+        <Config name="Default">
+          <CopyToMask>9223372036854775807</CopyToMask>
+        </Config>
+      </ConfigOptions>
+      <filename>Pathfind Extended.pdf</filename>
+    </datafile>
+  </datafiles>
+  <NewExtensions>
+    <extension index="0">extensions\Path Finding Extended</extension>
+  </NewExtensions>
   <sounds name="sound"/>
   <sprites name="sprites">
     <sprite>sprites\spriteSpace1</sprite>
@@ -70,6 +91,92 @@
     </scripts>
     <script>scripts\scriptMoveStep.gml</script>
     <script>scripts\scriptMoveTurn.gml</script>
+    <scripts name="Path Finding Extended">
+      <scripts name="Declare Tile Constraints">
+        <script>scripts\path_finder_cell_directional_constraints_set_ext.gml</script>
+        <script>scripts\path_finder_cell_directional_constraints_set.gml</script>
+        <script>scripts\path_finder_cell_directional_constraints_create.gml</script>
+      </scripts>
+      <script>scripts\maze_generate.gml</script>
+      <script>scripts\path_finder_directional_weight_grid_declare.gml</script>
+      <script>scripts\heuristic.gml</script>
+      <scripts name="ds list">
+        <script>scripts\ds_list_reverse.gml</script>
+        <script>scripts\ds_list_print_to_console.gml</script>
+      </scripts>
+      <scripts name="Paths Found">
+        <script>scripts\path_finder_list_to_path.gml</script>
+        <script>scripts\path_finder_path_to_goal.gml</script>
+        <script>scripts\path_finder_can_reach_goal.gml</script>
+      </scripts>
+      <scripts name="Searchers">
+        <scripts name="4 Directional">
+          <script>scripts\path_finder_dijkstra_search.gml</script>
+          <script>scripts\path_finder_a_star_search.gml</script>
+          <script>scripts\path_finder_breadth_first_search.gml</script>
+          <script>scripts\path_finder_greedy_first_search.gml</script>
+        </scripts>
+        <scripts name="8 Directional">
+          <script>scripts\path_finder_greedy_first_search_8d.gml</script>
+          <script>scripts\path_finder_breadth_first_search_8d.gml</script>
+          <script>scripts\path_finder_a_star_search_8d.gml</script>
+          <script>scripts\path_finder_dijkstra_search_8d.gml</script>
+        </scripts>
+        <scripts name="8 Directional , Increase Movement Cost">
+          <script>scripts\path_finder_dijkstra_search_8d_weighted.gml</script>
+          <script>scripts\path_finder_a_star_search_8d_weighted.gml</script>
+        </scripts>
+        <scripts name="Tile Constaints">
+          <script>scripts\path_finder_dijkstra_search_tile_constraint.gml</script>
+          <script>scripts\path_finder_a_star_search_tile_constraint.gml</script>
+          <script>scripts\path_finder_greedy_first_search_tile_constraint.gml</script>
+          <script>scripts\path_finder_breadth_first_search_tile_constraint.gml</script>
+        </scripts>
+        <scripts name="General">
+          <script>scripts\path_finder_dijkstra_search_general.gml</script>
+          <script>scripts\path_finder_a_star_search_general.gml</script>
+          <script>scripts\path_finder_greedy_first_search_general.gml</script>
+          <script>scripts\path_finder_breadth_first_search_general.gml</script>
+        </scripts>
+      </scripts>
+      <scripts name="Utility">
+        <script>scripts\path_finder_grid_in_bounds.gml</script>
+        <script>scripts\path_finder_grid_cell_passable.gml</script>
+        <scripts name="Cell Parameters">
+          <script>scripts\path_finder_grid_cell_get_y.gml</script>
+          <script>scripts\path_finder_grid_cell_get_id.gml</script>
+          <script>scripts\path_finder_grid_cell_get_x.gml</script>
+        </scripts>
+        <scripts name="Neighbour">
+          <script>scripts\path_finder_grid_neighbours.gml</script>
+          <script>scripts\path_finder_grid_neighbours_directional_constraints.gml</script>
+          <script>scripts\path_finder_grid_neighbours_directional_constraints_8.gml</script>
+          <script>scripts\path_finder_grid_8_neighbours.gml</script>
+        </scripts>
+        <script>scripts\path_finder_instance_get_cell.gml</script>
+      </scripts>
+      <scripts name="Weighted Grid">
+        <script>scripts\path_finder_grid_cell_get_weight.gml</script>
+        <script>scripts\path_finder_grid_declare_weights.gml</script>
+        <script>scripts\path_finder_grid_cell_weight.gml</script>
+      </scripts>
+      <scripts name="DEMO">
+        <script>scripts\demo_path_finder_grid_define.gml</script>
+        <script>scripts\demo_path_finder_grid_define_constrained.gml</script>
+        <script>scripts\demo_path_finder_grid_draw.gml</script>
+        <script>scripts\demo_path_finder_grid_draw_paths.gml</script>
+        <script>scripts\demo_path_finder_draw_costs.gml</script>
+        <script>scripts\demo_path_finder_grid_draw_true_path.gml</script>
+        <script>scripts\demo_path_finder_grid_draw_outline.gml</script>
+      </scripts>
+      <script>scripts\path_finder_grid_declare.gml</script>
+      <script>scripts\path_finder_grid_cell_set_wall.gml</script>
+      <script>scripts\path_finder_grid_instance_set_as_wall.gml</script>
+      <script>scripts\path_finder_grid_instance_set_as_wall_ext.gml</script>
+      <script>scripts\path_finder_grid_instance_set_as_index.gml</script>
+      <script>scripts\pathfinder_node_closest_to_point.gml</script>
+      <script>scripts\pathfinder_node_list_to_path.gml</script>
+    </scripts>
   </scripts>
   <objects name="objects">
     <object>objects\objectController</object>
@@ -88,9 +195,14 @@
     </objects>
     <object>objects\objectArmor</object>
     <object>objects\objectGun</object>
+    <object>objects\obj_demo_1</object>
+    <object>objects\obj_one_way_door</object>
+    <object>objects\obj_one_way_door_left</object>
+    <object>objects\obj_wall</object>
   </objects>
   <rooms name="rooms">
     <room>rooms\room0</room>
+    <room>rooms\room0_new</room>
   </rooms>
   <help>
     <rtf>help.rtf</rtf>
